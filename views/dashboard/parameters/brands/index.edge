@@ -1,0 +1,177 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<section class="content-header">
+		  <div class="container-fluid">
+			<div class="row mb-2">
+			  <div class="col-sm-6">
+				<h1 id="title">Marcas</h1>
+			  </div>
+			  <div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+				  <li class="breadcrumb-item active">Marcas</li>
+				</ol>
+			  </div>
+			</div>
+		  </div><!-- /.container-fluid -->
+		</section>
+	
+		<!-- Main content -->
+		<!-- Main content -->
+		<section class="content">
+		  <div class="container-fluid">
+			<div class="row">
+			  <div class="col-12">
+          <div class="row justify-content-between">
+              <div class="col-md-4 mb-3">
+                <button class="btn btn-info" data-toggle="modal" data-target="#addBrand"><i class="fa fa-plus"></i> Añadir marca</button>
+              </div>
+              <div class="col-md-4">
+                <form action="/dashboard/brands/search" method="GET">
+                    <div class="input-group input-group-dropdown">
+                        <div class="input-group-btn">
+                            <select class="form-control" name="find_by" required>
+                                @if(data)
+                                    @if(data.find_by == 'name')
+                                        <option value="name" selected>Nombre</option>
+                                    @else
+                                        <option value="name">Nombre</option>
+                                    @endif
+                                @else
+                                    <option value="name" selected>Nombre</option>
+                                @endif
+                            </select>
+                        </div>
+                        @if(data)
+                            <input type="text" class="form-control" placeholder="Escriba un termino..." name="query" value="{{data.input}}" required>
+                        @else
+                            <input type="text" class="form-control" placeholder="Escriba un termino..." name="query" required>
+                        @endif
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-sm btn-info" style="height: 38px"><i class="icofont icofont-search"></i> Buscar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+          </div>
+				<!-- Default box -->
+				<div class="card">
+				  <div class="card-body">
+                        <div id='message'>
+                            @if(flashMessages.get('message'))
+                                <div class="col-lg-12">
+                                    <div class="alert alert-{{flashMessages.get('type')}}">
+                                        <strong>{{flashMessages.get('message')}}</strong>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        <table class="table table-head-fixed text-nowrap">
+                            <thead>
+                                <tr>
+                                <th scope="col">ID </th>
+                                <th scope="col">Nombre </th>
+                                <th scope="col">Acciones </th>
+                                </tr>
+                            </thead>
+                            <tbody id="brands">
+                                @each(brand in brands)
+                                    <tr class="tr-items-sells" id="itemEdit">
+                                        <th scope="row">{{brand.id}}</th>
+                                        <th>{{capitalCase(brand.name)}}</th>
+                                        <td><button class="btn btn-info btn-sm" onclick="editBrand('{{brand.id}}','{{brand.name}}')"><i class="fas fa-pencil-alt"></i></button></td>
+                                    </tr>
+                                @endeach
+                            </tbody>
+                        </table>
+                        <div class="row justify-content-end mb-2">
+                            <div class="col-md-1 text-right">
+                                @if(brands.currentPage == 1)
+                                    <a href="/dashboard/brands/page/1"><i class="fas fa-angle-double-left"></i></a>
+                                @else
+                                    <a href="/dashboard/brands/page/{{brands.currentPage - 1}}"><i class="fas fa-angle-double-left"></i></a>
+                                @endif
+                            </div>
+                            <div class="col-md-1 text-center">
+                                {{brands.currentPage}} / {{brands.lastPage}}
+                            </div>
+                            <div class="col-md-1" class="text-left">
+                                @if(brands.lastPage == brands.currentPage)
+                                    <a href="/dashboard/brands/page/{{brands.lastPage}}"><i class="fas fa-angle-double-right"></i></a>
+                                @else
+                                    <a href="/dashboard/brands/page/{{brands.currentPage + 1}}"><i class="fas fa-angle-double-right"></i></a>
+                                @endif
+                            </div>
+                        </div>
+					</div>
+					</div>
+				  <!-- /.card-body -->
+				</div>
+				<!-- /.card -->
+			  </div>
+			</div>
+		</section>
+		<!-- /.content -->
+	  </div>
+		<div class="modal fade" id="addBrand" tabindex="-1" aria-labelledby="addCategory" aria-hidden="true">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Añadir Marca</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <form action="/dashboard/brands/create" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Nombre de la marca</label>
+                      <input type="text" class="form-control" id="newBrand" name="name">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Registrar marca <i class="fas fa-check"></i></button>
+                  </div>
+            </form>
+			</div>
+		  </div>
+		</div>
+		<div class="modal fade" id="editBrand" tabindex="-1" aria-labelledby="editBrand" aria-hidden="true">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Editar marca</h5>
+  
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <form action="/dashboard/brands/update" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Nombre de la marca</label>
+                      <input type="text" class="form-control" id="nameEditBrand" name="name">
+                      <input type="text" class="form-control" id="idEditBrand" name="id" hidden>
+                    </div>
+      
+                  </div>
+                  <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Rechazar Cambios <i class="fas fa-ban"></i></button>
+                        <button type="submit" class="btn btn-success">Modificar marca <i class="fas fa-check"></i></button>
+                  </div>
+            </form>
+			</div>
+		  </div>
+		</div>
+</div>
+
+@include('partials/footer')

@@ -1,0 +1,569 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+    @set('rates', await rates())
+    @set('company', await company())
+    <input type="text" id="rate_purchase" hidden value="{{rates.rate_purchase}}">
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 id="title">Añadir Compra</h1>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-item"><a href="purchases.html">Compras</a></li>
+                  <li class="breadcrumb-item active">/ Añadir Compra</li>
+                </ol>
+              </div>
+            </div>
+          </div><!-- /.container-fluid -->
+        </section>
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <div class="container-fluid mt-3">
+                      <div class="row justify-content-between">
+                        <div class="col-md-4">
+                          <div class="card">
+                            <div class="card-body">
+                              <i class="fas fa-money-bill-alt"></i> Tasa de compra: <span id="rate_purchase"></span> Bs
+                              <input type="text" id="company_retention" value="{{company.special_taxpayer}}" hidden>
+                              <div class="input-group is-invalid mt-2">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="validatedInputGroupPrepend"> Moneda</span>
+                                </div>
+                                <select id="type_currency" class="form-control">
+                                  <option value="bs">Bolivares</option>
+                                  <option value="usd">Dolares</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="card">
+                            <div class="card-body" id="provider_info">
+                                <i class="fas fa-people-carry"></i> Proveedor:
+                                <select class="form-control" id="provider_id">
+                                  <option value="0">Seleccionar proveedor</option>
+                                  @each(provider in providers)
+                                      <option value="{{provider.id}}" special_contributor="{{provider.special_contributor}}" id="provider-{{provider.id}}">{{provider.name}} {{provider.lastname}} {{provider.bussines_name}}</option>
+                                  @endeach
+                                  <option value="search">Buscar mas proveedores</option>
+                                </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <div class="container-fluid">
+                      <div class="row">
+                          <div class="col-md-12">
+                  <div class="card mt-3">
+                      <div class="card-header">
+                        <div class="row">
+                          <div class="col-4 ml-auto">
+                            <button type="button" class="btn btn-sm btn-success btn-block" id="select_item_modal_button">Añadir producto <i class="fas fa-plus-circle mr-auto"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-body table-in card-body-table">
+                          <table class="table">
+                            <thead class="thead-dark">
+                              <tr>
+                                <th style="width: 50px;" class="text-center"><i class="fas fa-trash-alt mr-auto"></i></th>
+                                <th style="width: 80px;"> Ref.</th>
+                                <th>Nombre</th>
+                                <th>Categoria</th>
+                                <th style="width: 100px;">Unidad</th>
+                                <th>Marca</th>
+                                <th style="width: 90px;">Cant.</th>
+                                <th style="width: 200px;" id="cost">Base Imponible Bs</th>
+                                <th style="width: 200px;" id="costConvert">Base Imponible $</th>
+                                <th style="width: 60px;">IVA</th>
+                                <th>IVA</th>
+                                <th>Total Bs</th>
+                                <th>Total $</th>
+                              </tr>
+                              <tbody id="tableItems">
+                  
+                              </tbody>
+                          </thead>
+                          <tbody>
+                            </table>
+                      </div>
+                      <div class="card-footer">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <select class="custom-select" id="typeDocument" required>
+                                    <option value="invoice">Factura</option>
+                                    <option value="note">Nota</option>
+                                  </select>
+                                </div>
+                                <input type="text" id="number_invoice" class="form-control" aria-describedby="validatedInputGroupPrepend" required>
+                              </div>
+                              <div class="input-group mt-2">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="usdSpan">Número de control</span>
+                                </div>
+                                <input type="text" class="form-control" id="controlNumber" aria-describedby="controlNumber">
+                              </div>
+                              <div class="input-group mt-2">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="usdSpan">Fecha</span>
+                                </div>
+                                <input type="date" class="form-control" id="datePurchase" aria-describedby="date">
+                              </div>
+                              </div>
+                            
+                            <div class="col-6">
+                              <div class="input-group col-12">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="bssSpan">Bss</span>
+                                </div>
+                                <input type="text" class="form-control" id="bss" aria-describedby="Bss" value="0.00" disabled>
+                              </div>
+                              <div class="input-group col-12 mt-2">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="usdSpan">USD</span>
+                                </div>
+                                <input type="text" class="form-control" id="dollars" aria-describedby="dollars" value="0.00" disabled>
+                              </div>
+                              <div class="input-group col-12 mt-2">
+                                <div class="custom-control custom-switch mb-2">
+                                  <input type="checkbox" class="custom-control-input is-invalid" id="pay_slider" value="true" onclick="statePay()">
+                                  <label class="custom-control-label" for="pay_slider" id=label_pay>No Pagado</label>
+                                </div>
+                                <div class="input-group">
+                                  <button type="button" id="save" class="btn btn-success btn-block">Procesar</button>
+                              </div>
+                              </div>
+                            </div>
+                            </div>
+                            <div class="col-auto mr-auto">
+                              <form class="form-inline ml-auto">
+                                  
+                                
+                                
+                            </form>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+          </div>
+        </section>
+        <!-- /.content -->
+      </div>
+      <div class="modal fade" id="select_item_modal" tabindex="-1" aria-labelledby="addProductRegistre" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Añadir producto</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="card">
+                <div id="messageTableProducts">
+                </div>
+                <div class="card-body card-body-table">
+                  <div class="row justify-content-end">
+                    <div class="col-md-8">
+                      <form id="formFindPartner">
+                          <div class="input-group input-group-dropdown mb-3">
+                              <div class="input-group-btn">
+                                  <select class="form-control" name="find_by" id="find_by_products" required>
+                                    <option value="name" selected>Nombre</option>
+                                    <option value="brand_id">Marca</option>
+                                    <option value="category_id">Categoria</option>
+                                    <option value="location">Ubicacion</option>
+                                    <option value="id">ID</option>
+                                  </select>
+                              </div>
+                              <div class="input-group-btn">
+                                  <select class="form-control" name="order_by" id="order_by_products" required>
+                                          <option value="asc" selected>Ascendiente</option>
+                                          <option value="desc">Descendente</option>
+                                  </select>
+                              </div>
+                              <input type="text" class="form-control" placeholder="Escriba un termino..." name="query" id="query_products" required>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                  <table class="table" id="tableItemsAdd">
+                    <thead class="thead-dark">
+                      <tr>
+                          <th scope="col">Ref.</th>
+                          <th scope="col">Nombre</th>
+                          <th scope="col">Categoria</th>
+                          <th scope="col">Marca</th>
+                      </tr>
+                  </thead>
+                  <tbody id="items_select_table">
+                  </tbody>
+                  </table>
+                  <div class="row justify-content-center">
+                    <div class="col-md-1 text-right">
+                      <button class="btn btn-sm btn-outline-info" id="previousPaginationItems"><i class="fas fa-angle-double-left"></i></button>
+                    </div>
+                    <div class="col-md-1 text-center mt-1">
+                      <span id="currentPageItems"></span> / <span id="lastPageItems"></span>
+                    </div>
+                    <div class="col-md-1" class="text-left">
+                      <button class="btn-sm btn btn-outline-info"  id="nextPaginationItems"><i class="fas fa-angle-double-right"></i></button>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              </div>
+            <div class="modal-footer">
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="pay" tabindex="-1" aria-labelledby="pay" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Procesar Pago</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row mb-3">
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="card">
+                    <div class="card-header text-center">
+                      Seleccione los metodos de pago
+                    </div>
+                    <div class="card-body">
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="tdd" value="true">
+                        <label class="custom-control-label" for="tdd">Punto de Venta</label>
+                      </div>
+                      <hr>
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="dollarsPay" value="true">
+                        <label class="custom-control-label" for="dollarsPay">Dolares</label>
+                      </div>
+                      <hr>
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="zellePay" value="true">
+                        <label class="custom-control-label" for="zellePay">Zelle</label>
+                      </div>
+                      <hr>
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="cashBsS" value="true">
+                        <label class="custom-control-label" for="cashBsS">Efectivo Bs</label>
+                      </div>
+                      <hr>
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="mobilePay" value="true">
+                        <label class="custom-control-label" for="mobilePay">Pago Movil</label>
+                      </div>
+                      <hr>
+                      <div id="retention"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="card">
+                    <div class="card-header">Ingrese monto(s)</div>
+                    <div class="card-body">
+                      <div class="form-group row">
+                        <div id="tddAmountDiv" class="col-12"></div>
+                        <div id="dollarsAmountDiv" class="col-12"></div>
+                        <div id="zelleAmountDiv" class="col-12"></div>
+                        <div id="cashBsSAmountDiv" class="col-12"></div>
+                        <div id="mobilePaymentDiv" class="col-12"></div>
+                        <div id="specialPaymentDiv" class="col-12"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card">
+                    <div class="card-header">Resumen de compra
+                    </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-md-6">SubTotal:</div>
+                          <div class="col-md-6" id="subtotal"></div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-6">IVA:</div>
+                          <div class="col-md-6" id="total_iva"></div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-6">Total Bs:</div>
+                          <div class="col-md-6" id="total_tax"></div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-6">Total $:</div>
+                          <div class="col-md-6" id="total_usd"></div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-6" id="change_text">Falta:</div>
+                          <div class="col-md-6" id="change"></div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <button class="btn btn-success btn-block" data-toggle="modal" data-target="#confirmModal">Realizar compra</button>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>    <!-- /.content-wrapper -->
+      <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Confimar Compra</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ¿Estás seguro de completar la compra?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-success"  onclick='close_purchase()'>Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{--  MODAL PROVIDER  --}}
+      <div class="modal fade" id="modalProvider" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Elegir proveedor</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="messageTable">
+              </div>
+              <div class="row justify-content-between">
+                <div class="col-md-3">
+                  <button class="btn btn-success mb-2" id="createPartner">Nuevo Registro</button>
+                </div>
+                <div class="col-md-8">
+                  <form id="formFindPartner">
+                      <div class="input-group input-group-dropdown">
+                          <div class="input-group-btn">
+                              <select class="form-control" name="find_by" id="find_by" required>
+                                <option value="name" selected>Nombre</option>
+                                <option value="bussines_name">Razon Social</option>
+                                <option value="fiscal_id">C.I o R.I.F</option>
+                                <option value="id">ID</option>
+                              </select>
+                          </div>
+                          <div class="input-group-btn">
+                              <select class="form-control" name="order_by" id="order_by" required>
+                                      <option value="asc" selected>Ascendiente</option>
+                                      <option value="desc">Descendente</option>
+                              </select>
+                          </div>
+                          <input type="text" class="form-control" placeholder="Escriba un termino..." name="query" id="query" required>
+                      </div>
+                  </form>
+              </div>
+              </div>
+                
+                <table class="table" id="tableItems">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" style="width: 45px">ID.</th>
+                            <th scope="col" style="width: 90px">Cedula / RIF</th>
+                            <th scope="col" style="width: 130px">Nombre y Apellido / Razon Social</th>
+                        </tr>
+                    </thead>
+                    <tbody id="providers_select_table">
+                    </tbody>
+                </table>
+                <div class="row justify-content-center">
+                  <div class="col-md-1 text-right">
+                    <button class="btn btn-sm btn-outline-info" id="previousPagination"><i class="fas fa-angle-double-left"></i></button>
+                  </div>
+                  <div class="col-md-1 text-center mt-1">
+                    <span id="currentPage"></span> / <span id="lastPage"></span>
+                  </div>
+                  <div class="col-md-1" class="text-left">
+                    <button class="btn-sm btn btn-outline-info"  id="nextPagination"><i class="fas fa-angle-double-right"></i></button>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="modalCreateProvider" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Crear registro</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <section class="content">
+                <div class="container-fluid">
+                  <div class="row">
+                  <div class="col-3 mb-3">
+                    <a  href="/dashboard/partners/?type_partner=clients" class="btn btn-info">Listado de registros</a>
+                  </div>
+                  <div class="col-12">
+                    <!-- Default box -->
+                    <div class="card card-info card-outline card-outline-tabs">
+                    <div class="card-header p-0 border-bottom-0">
+                      <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="custom-tabs-four-home-tab" data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home" aria-selected="true">Información</a>
+                      </li>
+                      </ul>
+                    </div>
+                    <div class="card-body">
+                      <div id="message">
+                      </div>
+                      <div class="tab-content" id="custom-tabs-four-tabContent">
+                      <div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
+                          <form action="/dashboard/partners/create" method="post" id="createFormPartner">
+                          <div class="form-group clearfix">
+                            <div class="icheck-primary d-inline">
+                              <input type="radio" id="natural_person" name="type_company" value="natural_person" checked required>
+                              <label for="natural_person">
+                              Persona Natural
+                              </label>
+                            </div>
+                            <div class="icheck-primary d-inline">
+                              <input type="radio" id="company" name="type_company" value="company" required>
+                              <label for="company">
+                              Compañia
+                              </label>
+                            </div>
+                            </div>
+                            <div id="type_register_name">
+                            <label for="name">Nombre y Apellido</label>
+                            <div class="form-group form-inline">
+                              <input type="text" class="form-control col-6" id="name" placeholder="Carlos" name='name' required value="{{flashMessages.get('data.name', '')}}">
+                              <input type="text" class="form-control col-6" id="lastname" placeholder="Pérez" name='lastname' required value="{{flashMessages.get('data.lastname', '')}}">
+                            </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                              <div class="col-6">
+                                <h4 class="text-center">Información de contacto</h4>
+                                <hr>
+                                <div class="form-group">
+                                  <label>Número de contacto</label>
+                        
+                                  <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                  </div>
+                                  <input id="phone" type="text" class="form-control" data-inputmask='"mask": "(999) 999-9999"' data-mask name="phone" value="{{flashMessages.get('data.phone', '')}}" required>
+                                  </div>
+                                  <!-- /.input group -->
+                                </div>
+                                <div class="form-group">
+                                  <label for="dni">Documento de identidad</label><br>
+                                  <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <select id="type_fiscal_id" name="type_fiscal_id" class="custom-select" required>
+                                        <option>V</option>
+                                        <option>E</option>
+                                        <option>J</option>
+                                        <option>G</option>
+                                      </select>
+                                    </div>
+                                    <!-- /btn-group -->
+                                    <input id="dni" type="text" class="form-control" name="fiscal_id" required value="{{flashMessages.get('data.fiscal_id', '')}}">
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label>Dirección de habitación</label>
+                                  <textarea id="address" class="form-control" rows="3" placeholder="Dirección..." name="address" required>{{flashMessages.get('data.address', '')}}</textarea>
+                                </div>
+                              </div>
+                              <div class="col-6">
+                                <h4 class="text-center">Tipo de registro</h4>
+                                <hr>
+                                <div class="form-group">
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" value="true" name="client" id="client">
+                                  <label class="form-check-label">Cliente</label>
+                                </div>
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" value="true" name="provider" id="provider">
+                                  <label class="form-check-label">Proveedor</label>
+                                </div>
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" value="true" name="special_contributor" id="special_contributor">
+                                  <label class="form-check-label" for="special_contributor">Contribuyente Especial</label>
+                                </div>
+                                </div>
+                    
+                              </div>
+                              <div class="col-md-12">
+                                <button type="submit" id="submitPartner" class="btn btn-sm btn-success btn-block" id="save_register"> <i class="fas fa-save"></i> Guardar Cambios</button>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                  </div>
+                </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    <script src="/js/add_purchases.js"></script>
+      
+  
+</div>
+@include('partials/footer')

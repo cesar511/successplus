@@ -1,0 +1,120 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 id="title">Cajas</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-cashier active">Cajas</li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <!-- Default box -->
+              <div class="card">
+                <div class="card-header ">
+                  <div class="row justify-content-between">
+                    <div class="col-3">
+                      <ul class="pagination pagination-sm m-0 float-right">
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body card-body-table">
+                  <table id="tableRegister" class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th style="width: 100px;" scope="col-1">Cajero</th>
+                            <th scope="col">Acciones</th>
+                            <th scope="col">Fecha de apertura</th>
+                            <th scope="col">Fecha de cierre</th>
+                            <th scope="col" style="width: 100px;">Nº Clientes</th>
+                            <th scope="col">Total de venta Bs</th>
+                            <th scope="col">Total de venta $</th>
+                            <th scope="col">Efectivo Bs</th>
+                            <th scope="col">Efectivo Bs Recibido</th>
+                            <th scope="col">Dolares $</th>
+                            <th scope="col">Dolares $ Recibidos</th>
+                            <th scope="col">Zelle $</th>
+                            <th scope="col">Zelle $ Recibidos</th>
+                            <th scope="col">Pago Movil</th>
+                            <th scope="col">Pago Movil Recibido</th>
+                            <th scope="col">Punto de Venta </th>
+                            <th scope="col">Punto de Venta Recibido</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @each(cashier in cashiers)
+                        <tr>
+                            <th scope="row">{{cashier.user_name}}</th>
+                            <td><a class="btn btn-sm btn-info" href="/dashboard/cashiers/print/{{cashier.id}}">IMPRIMIR</a></td>
+                            <td>{{cashier.created_at}}</td>
+                            <td>{{cashier.closed_at}}</td>
+                            <td>{{cashier.client_count}}</td>
+                            <td>{{cashier.total_sale_bs}}</td>
+                            <td>{{cashier.total_sale_usd}}</td>
+                            <td>{{cashier.cash}}</td>
+                            <td>{{cashier.cash_received}}</td>
+                            <td>{{cashier.dollar}}</td>
+                            <td>{{cashier.dollar_received}}</td>
+                            <td>{{cashier.zelle}}</td>
+                            <td>{{cashier.zelle_received}}</td>
+                            <td>{{cashier.mobile_payment}}</td>
+                            <td>{{cashier.movil_payment_received}}</td>
+                            <td>{{cashier.point_of_sale}}</td>
+                            <td>{{cashier.point_of_sale_received}}</td>
+                        </tr>
+                        @endeach
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row justify-content-end mb-2 mt-2">
+                  <div class="col-md-1 text-right">
+                      @if(cashiers.currentPage == 1)
+                          <a href="/dashboard/cashiers/page/1"><i class="fas fa-angle-double-left"></i></a>
+                      @else
+                          <a href="/dashboard/cashiers/page/{{cashiers.currentPage - 1}}"><i class="fas fa-angle-double-left"></i></a>
+                      @endif
+                  </div>
+                  <div class="col-md-1 text-center">
+                      {{cashiers.currentPage}} / {{cashiers.lastPage}}
+                  </div>
+                  <div class="col-md-1" class="text-left">
+                      @if(cashiers.lastPage == cashiers.currentPage)
+                          <a href="/dashboard/cashiers/page/{{cashiers.lastPage}}"><i class="fas fa-angle-double-right"></i></a>
+                      @else
+                          <a href="/dashboard/cashiers/page/{{cashiers.currentPage + 1}}"><i class="fas fa-angle-double-right"></i></a>
+                      @endif
+                  </div>
+              </div>
+          </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+@include('partials/footer')

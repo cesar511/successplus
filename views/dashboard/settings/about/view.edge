@@ -1,0 +1,74 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 id="title"><i class="fa fa-book"></i> Acerca De</h1>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-6">
+              <!-- Default box -->
+              <div class="card">
+                  <div class="card-header">
+                      Desarrolladores
+                  </div>
+                  <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                          <li class="list-group-item text-center"><b>JMC Servicios Empresariales 25, C.A</b></li>
+                          <li class="list-group-item">
+                              <p class="text-center"><b>Correos</b></p>
+                              <p class="text-center">jmcserviciosempresariales@gmail.com</p>
+                          </li>
+                          <hr>
+                          <li class="list-group-item text-center"><b>Encoding Tech</b></li>
+                          <li class="list-group-item">
+                              <p class="text-center"><b>Sitio Web</b></p>
+                              <p class="text-center">https://encodingtech.com</p>
+                          </li>
+                        </ul>
+                  </div>
+              </div>
+              
+              <!-- /.card -->
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Información de licencia
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item list-group-item-success">Estado de licencia: Activa</li>
+                            <li class="list-group-item list-group-item-primary">Fecha de activación: <span id="date_start"></span></li>
+                            <li class="list-group-item list-group-item-primary">Fecha de caducidad: <span id="date_end"></span></li>
+                            <li class="list-group-item">Version: 1.0.12-R4 - Entorno de desarrollo</li>
+                          </ul>
+                    </div>
+                </div>
+            </div>
+          </div>
+      </section>
+      <!-- /.content -->
+    </div>
+    
+</div>
+
+@include('partials/footer')

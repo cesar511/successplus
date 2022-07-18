@@ -1,0 +1,232 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    @include('partials/menu')
+    <!-- /.navbar -->
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 id="title">Ver Artículo: <span id="name_item_title">{{item.name}}</span></h1>
+          </div>
+          <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-item"><a href="/dashboard/inventory/index">{{item.name}}</a></li>
+                  <li class="breadcrumb-item active">Ver Artículo: <span id="name_item_bread"></span></li>
+              </ol>  
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row" id="buttons">
+
+            </div>
+          </div>
+          <div class="col-12">
+            <!-- Default box -->
+            <div class="card">
+              @if(flashMessages.get('message'))
+                  <div class="col-lg-12 mt-2">
+                      <div class="alert alert-{{flashMessages.get('type')}}">
+                          <strong>{{flashMessages.get('message')}}</strong>
+                      </div>
+                  </div>
+              @endif
+              <!-- /.card-header -->
+              <div class="card-body">
+                <form method="POST" action="/dashboard/inventory/item/update/{{item.id}}">
+
+                  <div class="row">
+                      <div class="col-6">
+                        <div class="row">
+                          <div class="col-6">
+                            <p><strong>Nombre: </strong><span id="name_item">{{item.name}}</span></p>
+                            <p><strong>Categoria: </strong><span id="category_item">{{item.category_name}}</span></p>
+                            <p><strong>Marca: </strong><span id="brand_item"></span>{{item.brand_name}}</p>
+                            <p><strong>Ubicación: </strong><span id="ubication_item">{{item.location_name}}</span></p>
+                          </div>
+                          <div class="col-6">
+                            <p><strong>Método de costeo: </strong><span id="costing_method_item">{{item.costing_method}}</span></p>
+                            <p><strong>Costo: </strong><span id="cost_item_bss">{{item.price_bs}}</span></p>
+                            <p><strong>Costo: </strong><span id="cost_item_usd">{{item.price_usd}}</span></p>
+                            <p><strong>Cantidad Actual: </strong><span id="amount">{{item.amount}}</span></p>
+                            <p><strong id="tax_in"></strong></p>
+                          </div>
+
+                          <div class="col-12 mt-2">
+                            <hr>
+                            <h3 class="text-center">Máximos y mínimos</h3>
+                          </div>
+
+                          <div class="col-12">
+                            <div class="form-group">
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">Máximo en inventario</span>
+                                </div>
+                                @if(item.amount_max)
+                                <input id="max" type="text" class="form-control" value="{{item.amount_max}}" name="amount_max">
+                                @else
+                                <input id="min" type="text" class="form-control" value="0" name="amount_max">
+                                @endif
+                              </div>
+                              <!-- /.input group -->
+                          </div>
+                          </div>
+                          <div class="col-12">
+                            <div class="form-group">
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">Mínimo en inventario</span>
+                                </div>
+                                @if(item.amount_min)
+                                <input id="min" type="text" class="form-control" value="{{item.amount_min}}" name="amount_min">
+                                @else
+                                <input id="min" type="text" class="form-control" value="0" name="amount_min">
+                                @endif
+                              </div>
+                              <!-- /.input group -->
+                            </div>
+                          </div>
+                          <hr>
+                          <input type="text" value="{{item.iva_out}}" id="iva_out" hidden>
+                          <input type="text" value="{{item.rate_sale}}" id="rate_sale" hidden>
+                          <input type="text" value="{{item.rate_purchase}}" id="rate_purchase" hidden>
+                          <input type="text" value="{{item.price}}" id="cost" hidden>
+                          <div class="col-6">
+                            <a class="btn btn-info btn-block" href="/dashboard/print/price/{{item.id}}/bs" target="_blank"><i class="fa fa-print"></i> Imprimir Hablador en Bolivares</a>
+                          </div>
+                          <div class="col-6">
+                            <a class="btn btn-info btn-block" href="/dashboard/print/price/{{item.id}}/usd" target="_blank"><i class="fa fa-print"></i> Imprimir Hablador en dolares</a>
+                          </div>
+                          <div class="col-12 mt-3">
+                            <a class="btn btn-info btn-block" href="/dashboard/print/price/{{item.id}}/all" target="_blank"><i class="fa fa-print"></i> Imprimir Hablador completo</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <h3 class="text-center">Ganancia</h3>
+                        <hr>
+                        <div class="form-group">
+                          <label>Tipo de moneda</label>
+        
+                          <div class="input-group">
+                            <select id="type-currency" type="text" class="form-control">
+                              <option value="currency_bs">Bolivares</option>
+                              <option value="currency_usd">Dólares</option>
+                            </select>
+                          </div>
+                          <div class="row mt-2">
+                            <div class="col-6">
+                              <div class="form-group">
+                                <label>Precio de venta</label>
+              
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="currency_text"><strong><span id="icon_currency">Bs</span></strong></span>
+                                  </div>
+                                  <input id="gain-price" type="text" class="form-control" onkeyup="format()" value="{{item.sale_price}}" onchange="load_data()">
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="form-group">
+                                <label>Ganancia</label>
+              
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                  </div>
+                                  <input id="gain-porcent" type="text" class="form-control" onchange="gainPorcent()" value="{{item.gain}}" name="gain">
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+                            </div>
+                            <div class="col-6">
+                              <label>IVA</label>
+
+                              <div class="custom-control custom-switch">
+                                  <input type="checkbox" class="custom-control-input" id="haveIva"  name="iva_out" onchange="updateIva('{{item.sale_price}}', '{{item.tax}}')" value="on" ${checked}>
+                                  <label class="custom-control-label" for="haveIva"></label>
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="form-group">
+                                <label>IVA</label>
+              
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text">Bs</span>
+                                  </div>
+                                  <input id="tax" type="text" class="form-control" disabled>
+                                </div>
+                                <!-- /.input group -->
+                              </div>
+                            </div>
+                            <div class="col-12">
+                              <label>Precio de venta + IVA</label>
+                            </div>
+                            <div class="col-6">
+                              <div class="form-group">
+              
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><strong>Bs</strong></span>
+                                  </div>
+                                  <input id="total-sale" type="text" class="form-control" readonly>
+                                </div>
+                                <!-- /.input group -->
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="form-group">
+        
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><strong>$</strong></span>
+                                  </div>
+                                  <input id="total-sale-usd" type="text" class="form-control"  name="sale_price" readonly>
+                                </div>
+                                <!-- /.input group -->
+                              </div>
+                            </div>
+                            
+                            <div class="col-12">
+                              <button type="submit" class="btn btn-success btn-block">Actualizar</button>
+                            </div>
+                          </form>
+                            </div>
+                            </div>
+                          </div>
+                          
+                          <!-- /.input group -->
+                        </div>
+                      </div>
+                  </div>
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            
+          
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <script src="/js/view_item_inventory.js"></script>
+
+@include('partials/footer')

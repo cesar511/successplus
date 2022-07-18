@@ -1,0 +1,82 @@
+@include('partials/header')
+<div class="container">
+    <div class="row mt-4 justify-content-center text-center">
+        <div class="col-md-6">
+            <img src="img/logo2.png" width="80" alt="">
+            <img src="img/logo1.png" width="300" alt="">
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center mt-3 mb-3" id="information">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Información de la licencia</div>
+                <div class="card-body">
+                    <div id='message'>
+						@if(flashMessages.get('message'))
+							<div class="col-lg-12">
+								<div class="alert alert-{{flashMessages.get('type')}}">
+									<strong>{{flashMessages.get('message')}}</strong>
+								</div>
+							</div>
+						@endif
+					</div>
+                    <form action="/config/complete" method="POST">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Razon Social de la empresa</label>
+                            <input type="text" class="form-control" id="social_reason" name="business_name" aria-describedby="emailHelp">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">RIF</label>
+                            <input type="text" class="form-control" id="rif" name="fiscal_id" aria-describedby="emailHelp" readonly value="{{flashMessages.get('data.rif')}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Nombre del representante legal</label>
+                            <input type="text" class="form-control" id="name" name="name_representative" aria-describedby="emailHelp">
+                        </div>
+                        <label for="exampleInputEmail1">Cedula del representante legal</label>
+                        <div class="input-group has-validation">
+                            <div class="input-group-prepend">
+                              <select id="typeCi" class="form-control" name="type_id_representative">
+                                  <option value="V">V</option>
+                                  <option value="E">E</option>
+                              </select>
+                            </div>
+                                <input type="text" class="form-control" id="ci" aria-describedby="emailHelp" name="representative_id" >
+                          </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Correo Electronico</label>
+                            <input type="text" class="form-control" id="email" aria-describedby="emailHelp" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Telefono</label>
+                            <input type="text" class="form-control" id="phone" aria-describedby="emailHelp" name="number_phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Direción fiscal </label>
+                            <textarea type="text" class="form-control" id="address" aria-describedby="emailHelp" name="fiscal_address"></textarea>
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="bussines_image">
+                                <label class="custom-file-label" for="customFile" data-browse="Buscar">Logo de la empresa</label>
+                              </div><br>
+                        </div>
+                        <label for="exampleInputEmail1" class="mt-2">Fecha de inicio de la licencia (AÑO/MES/DÍA)</label>
+                        <div class="input-group has-validation">
+                            <input type="text" class="form-control" id="start" aria-describedby="emailHelp" readonly value="{{flashMessages.get('data.date_start')}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Fecha de finalización de la licencia (AÑO/MES/DÍA)</label>
+                            <input type="text" class="form-control" id="finished" aria-describedby="emailHelp" readonly name="date_license" value="{{flashMessages.get('data.date_end')}}">
+                        </div>
+                        <button type="submit" class="btn btn-success mt-3 btn-block"">Completar activación</button>
+                    </form>
+                </div>
+                        
+            </div>
+        </div>
+    </div>
+</div>
+@include('partials/footer')

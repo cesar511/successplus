@@ -1,0 +1,152 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+  
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1>Inicio</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="#">Inicio</a></li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section>
+        <div class="container">
+          <div class="row justify-centent-center">
+            <div class="col-md-10" id="main">
+              <!-- Default box -->
+                <!--Primera Fila-->
+                <div class="row justify-content-center">
+  
+                    <div class="col-md-2 mt-4 offset-1">
+                    <a href="/dashboard/settings" class="btn btn-app btn-block bg-warning">
+                      <i class="fas fa-cog"></i> <small>Configuración</small>
+                    </a>
+                  </div>
+                  <div class="col-md-2 mt-4 offset-1">
+                    <a href="/dashboard/purchases" class="btn btn-app btn-block bg-info">
+                      <i class="fas fa-money-bill-wave"></i> <small>Compras</small>
+                    </a>
+                  </div>
+                  <div class="col-md-2 mt-4 offset-1">
+                    <a href="/dashboard/inventory/current" class="btn btn-app btn-block bg-danger">
+                      <i class="fas fa-boxes"></i> <small>Inventario</small>
+                    </a>
+                  </div>
+                  <div class="col-md-2 mt-4 offset-1">
+                    <a href="/dashboard/about" class="btn btn-app btn-block bg-success">
+                      <i class="fas fa-info-circle"></i> <small>Licencia</small>
+                    </a>
+                  </div>
+                  {{--  <div class="col-md-2 mt-4 offset-1">
+                    <a href="#" class="btn btn-app btn-block bg-success" onclick="openBox()">
+                      <i class="fas fa-cash-register"></i> <small>Caja</small>
+                    </a>
+                  </div>  --}}
+                  </div>
+                  <!--Segunda FIla-->
+                  <div class="row justify-content-center">
+                    
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/brands" class="btn btn-app btn-block bg-warning">
+                        <i class="fas fa-list-ul"></i> <small>Marcas</small>
+                      </a>
+                    </div>
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/categories" class="btn btn-app btn-block bg-info">
+                        <i class="fas fa-list-ul"></i> <small>Categorias</small>
+                      </a>
+                    </div>
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/locations" class="btn btn-app btn-block bg-danger">
+                        <i class="fas fa-list-ul"></i> <small>Ubicaciones</small>
+                      </a>
+                    </div>
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/payments" class="btn btn-app btn-block bg-success">
+                        <i class="fas fa-money-check-alt"></i> <small>Conciliación De Pagos</small>
+                      </a>
+                    </div>
+                    {{--  <div class="col-md-2 mt-4 offset-1">
+                      <a href="sales.html" class="btn btn-app btn-block bg-success">
+                        <i class="fas fa-credit-card"></i> <small>Ventas</small>
+                      </a>
+                    </div>  --}}
+                  </div>
+                  <div class="row justify-content-center">
+                    <!--Tercera FIla-->
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/rates" class="btn btn-app btn-block bg-warning">
+                        <i class="fas fa-globe"></i> <small>Tasa de cambio</small>
+                      </a>
+                    </div>
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/items" class="btn btn-app btn-block bg-info">
+                        <i class="fas fa-box"></i> <small>Artículos</small>
+                      </a>
+                    </div>
+                  
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/providers" class="btn btn-app btn-block bg-danger">
+                        <i class="fas fa-people-carry"></i> <small>Proveedores</small>
+                      </a>
+                    </div>
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/users" class="btn btn-app btn-block bg-success">
+                        <i class="fas fa-id-card"></i> <small>Usuarios</small>
+                      </a>
+                    </div>
+                    {{--  <div class="col-md-2 mt-4 offset-1">
+                      <a href="clients.html" class="btn btn-app btn-block bg-success">
+                        <i class="fas fa-user-tag"></i> <small>Clientes</small>
+                      </a>
+                    </div>  --}}
+                  </div>
+                  <div class="row justify-content-start">
+                    
+                    <div class="col-md-2 mt-4 offset-1">
+                      <a href="/dashboard/inventory/ajusts" class="btn btn-app btn-block bg-warning">
+                        <i class="fas fa-building"></i> <small>Ajustes</small>
+                      </a>
+                    </div>
+                    {{--  <div class="col-md-2 mt-4 offset-1">
+                      <a href="export_data.html" class="btn btn-app btn-block bg-danger">
+                        <i class="fas fa-book"></i> <small>Reportes</small>
+                      </a>
+                    </div>  --}}
+                    {{--  <div class="col-md-2 mt-4 offset-1">
+                      <a href="register_box.html" class="btn btn-app btn-block bg-success">
+                        <i class="fas fa-book-open"></i> <small>Registros de caja</small>
+                      </a>
+                    </div>  --}}
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  
+
+@include('partials/footer')

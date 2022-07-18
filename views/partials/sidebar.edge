@@ -1,0 +1,236 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4" id="sidebar">
+    <a href="#" class="brand-link">
+        <img src="/img/logo2.png" alt="AdminLTE Logo" class="ml-3" width="30">
+        <span class="brand-text font-weight-light"><img src="/img/logo1.png" alt="SuccessPlus" class="" width="170"></span>
+      </a>
+  
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Sidebar user (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex text-center">
+          <div class="info text-center">
+            <a href="#" class="text-center"><i class="fa fa-user"></i> {{auth.user.name}} {{auth.user.lastname}}</a>
+          </div>
+        </div>
+  
+        <!-- SidebarSearch Form -->
+        <div class="form-inline">
+          <div class="input-group" data-widget="sidebar-search">
+            <input class="form-control form-control-sidebar" type="search" placeholder="Buscar..." aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-sidebar">
+                <i class="fas fa-search fa-fw"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <li class="nav-item">
+          <a href="/dashboard" class="nav-link">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>
+              Inicio
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-credit-card"></i>
+            <p>
+              Ventas
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/dashboard/sales/index" class="nav-link">
+                <i class="fas fa-credit-card nav-icon"></i>
+                <p>Ventas</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/cashier/" class="nav-link" target="_blank">
+                <i class="fas fa-cash-register nav-icon"></i>
+                <p>Caja</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-money-bill-wave nav-icon"></i>
+            <p>
+              Compras
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/dashboard/purchases" class="nav-link">
+                <i class="fas fa-money-bill-wave nav-icon"></i>
+                <p>Compras</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-money-bill nav-icon"></i>
+            <p>
+              Tesorería
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/dashboard/payments" class="nav-link">
+                <i class="fas fa-info-circle nav-icon"></i>
+                <p>Pagos</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-book"></i>
+            <p>
+              Reportes
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/dashboard/cashiers/index" class="nav-link">
+                <i class="fas fa-book-open nav-icon"></i>
+                <p>Registro de cajas</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/reports/" class="nav-link">
+                <i class="fas fa-book nav-icon"></i>
+                <p>Generar Reportes</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+          <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-boxes"></i>
+            <p>
+              Inventario
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/dashboard/items" class="nav-link">
+                <i class="fas fa-box nav-icon"></i>
+                <p>Artículos</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/inventory/current" class="nav-link">
+                <i class="fas fa-boxes nav-icon"></i>
+                <p>Inventario Actual</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/inventory/ajusts" class="nav-link">
+                <i class="fas fa-cog nav-icon"></i>
+                <p>Ajuste de inventario</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+          <i class="fas fa-sliders-h nav-icon"></i>
+            <p>
+              Parametros
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+          <li class="nav-item">
+              <a href="/dashboard/brands" class="nav-link">
+                <i class="fas fa-building nav-icon"></i>
+                <p>Marcas</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/categories" class="nav-link">
+                <i class="fas fa-globe nav-icon"></i>
+                <p>Categorias</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/locations" class="nav-link">
+                <i class="fas fa-id-card nav-icon"></i>
+                <p>Ubicaciones</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        
+          <li class="nav-item">
+          <a href="#" class="nav-link">
+          <i class="fas fa-sliders-h nav-icon"></i>
+            <p>
+              Configuración
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+          <li class="nav-item">
+              <a href="/dashboard/settings" class="nav-link">
+                <i class="fas fa-building nav-icon"></i>
+                <p>Configuración</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/rates" class="nav-link">
+                <i class="fas fa-globe nav-icon"></i>
+                <p>Tasa</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/users" class="nav-link">
+                <i class="fas fa-id-card nav-icon"></i>
+                <p>Usuarios</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/parameterization" class="nav-link">
+                <i class="fas fa-list-ul nav-icon"></i>
+                <p>Parametrización</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/partners/client" class="nav-link">
+                <i class="fas fa-user-tag nav-icon"></i>
+                <p>Clientes</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/dashboard/partners/provider" class="nav-link">
+                <i class="fas fa-people-carry nav-icon"></i>
+                <p>Proveedores</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="/dashboard/about" class="nav-link">
+            <i class="fas fa-info-circle nav-icon"></i>
+            <p>Licencia</p>
+          </a>
+        </li>
+            
+          </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div>
+</aside>

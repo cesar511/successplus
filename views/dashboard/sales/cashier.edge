@@ -1,0 +1,809 @@
+@include('partials/header')
+<style>
+  .numeric-keyboard {
+    height: 60px;
+    border-radius: 0%;
+}
+
+.actions_buttons {
+    height: 144px;
+}
+
+.list-products {
+    height: 300px;
+	overflow-y: scroll;
+    border-radius: 0%;
+    box-shadow: none;
+    border: 1px solid #eeeeee;
+}
+
+.info {
+    border-radius: 0%;
+    box-shadow: none;
+    border: 1px solid #eeeeee;
+}
+
+.btn {
+    border-radius: 0;
+}
+
+.no-borders { 
+    border-radius: 0;
+}
+
+.table-hover:hover {
+    cursor: pointer;
+}
+
+.items-selection {
+    height: 325px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+</style>
+<div class="wrapper">
+    @include('partials/loader')
+<div class="container-fluid">
+    <div class="row justify-content-end">
+      @set('rates', await rates())
+      @set('company', await company())
+      <input type="text" id="rate_sale" hidden value="{{rates.rate_sale}}">
+      <input type="text" id="id_cashier" hidden value="{{cashier.id}}">
+        <div class="col-8 mt-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card info">
+                                        <div class="card-body">
+                                            <i class="fas fa-user"></i> Cajero: {{auth.user.name}} {{auth.user.lastname}}<br>
+                                            <i class="fas fa-money-bill-wave mt-2 mr-2"></i>Bs. {{rates.rate_sale}}<br>
+                                            <i class="fas fa-users mt-2"></i> Clientes atendidos: <span id="clients_counter">{{cashier.client_count}}</span><br>
+                                            <hr>
+                                            <i class="fa fa-user"></i> Cliente: <span id="client_name">No seleccionado</span><br>
+                                            <i class="fa fa-box"></i> Cantidad de artículos: <span id="amount_items">0</span><br>
+                                            <button type="button" id="select_client" class="btn btn-info btn-sm btn-block">Seleccionar cliente <strong>[F1]</strong></button>
+                                            <hr>
+                                            <button type="button" id="listing_cashiers" class="btn btn-info btn-sm btn-block">Listado de cajas <span id="counter_cashiers"></span><strong> [F2]</strong></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card info">
+                                        <div class="card-body">
+                                            <button type="button" id="read_till" class="btn btn-warning btn-sm btn-block" onclick="readTill()">Estado Actual <strong>[F3]</strong></button>
+                                            <hr>
+                                            <button type="button" class="btn btn-danger btn-sm btn-block" onclick="close_box()">Cerrar Caja <strong>[F4]</strong></strong></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                  <div class="card info">
+                                      <div class="card-body">
+                                          <button type="button" id="print_invoice" class="btn btn-success btn-sm btn-block">Imprimir ultima venta <strong>[F5]</strong></button>
+                                          <hr>
+                                          <button type="button" id="print_invoice_not_body" class="btn btn-success btn-sm btn-block">Imprimir ultima venta (Forma Libre) <strong>[F6]</strong></button>
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card info">
+                                        <div class="card-body bg-success text-center">
+                                            <h3><span id="total_bolivars">Bs. 0,00</span> - <span id="total_dollars">$ 0,00</span></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card info">
+                                        <div class="card-header">
+                                            <div class="row justify-content-center">
+                                                <div class="form-group col-md-6">
+                                                    <!-- <input type="text" class="form-control no-borders" id="sku" placeholder="Ingrese SKU (codigo de barra)"> -->
+                                                </div>
+                                                <div class="col-2 mx-auto my-auto ml-1">
+                                                    <ul class="pagination"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body items-selection">
+                                            <table class="table table-sm table-hover" id='table-items'></table>
+                                        </div>
+                                        <div class="card-footer">
+                                          <div class="row justify-content-center">
+                                            <div class="col-md-1 text-right">
+                                              <button class="btn btn-sm btn-info" id="previousPaginationItems"><i class="fas fa-angle-double-left"></i></button>
+                                            </div>
+                                            <div class="col-md-1 text-center mt-1">
+                                              <span id="currentPageItem"></span> / <span id="lastPageItem"></span>
+                                            </div>
+                                            <div class="col-md-1" class="text-left">
+                                              <button class="btn-sm btn btn-info"  id="nextPaginationItems"><i class="fas fa-angle-double-right"></i></button>
+                                            </div>
+                                          </div>
+                                            <div class="row">
+                                              <div class="col-md-12">
+                                                <form class="mt-2">
+                                                  <div class="form-row">
+                                                    <div class="form-group col-md-6">
+                                                      <select class="form-control form-control-sm" id="find_by_items" name="find_by_items">
+                                                          <option value="name" selected>Nombre</option>
+                                                          <option value="category">Categoria</option>
+                                                          <option value="brand">Marca</option>
+                                                          <option value="ref">Referencia</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                      <input type="text" class="form-control form-control-sm" id="query_items" name="query">
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-row">
+                                                      <div class="form-group col-md-4">
+                                                        <input type="text" class="form-control form-control-sm" value="Ordenar por:" disabled>
+                                                      </div>
+                                                      <div class="form-group col-md-4">
+                                                          <select class="form-control form-control-sm" id="order_by_items" name="order_by">
+                                                            <option value="1" selected>Ascendente</option>
+                                                            <option value="-1">Descendente</option>
+                                                          </select>
+                                                      </div>
+                                                      <div class="form-group col-md-2">
+                                                          <button type="button" class="btn btn-primary btn-block btn-sm" id="search_item">Buscar</button>
+                                                      </div>
+                                                      <div class="form-group col-md-2">
+                                                          <button type="button" class="btn btn-warning btn-block btn-sm text-dark" id="reset_items">Limpiar</button>
+                                                      </div>
+                                                  </div>
+                                              </form>
+                                              </div>
+                                          </div>
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+           <div class="row p-4">
+               <div class="col-12">
+                   <div class="card list-products">
+                       <div class="card-body p-0" id="list-products-purchase" style="height:372px">
+                            <p class="alert alert-warning mt-3 mr-3 ml-3">No hay productos seleccionados</p>
+                       </div>
+                   </div>
+               </div>
+               <div class="col-7">
+                    <div class="row justify-content-center">
+                        <div class="col-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('1')">
+                                1
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('2')">
+                                2
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('3')">
+                                3
+                            </button>
+                        </div>
+                        <div class="col-4 mt-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('4')">
+                                4
+                            </button>
+                        </div>
+                        <div class="col-4 mt-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('5')">
+                                5
+                            </button>
+                        </div>
+                        <div class="col-4 mt-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('6')">
+                                6
+                            </button>
+                        </div>
+                        <div class="col-4 mt-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('7')">
+                                7
+                            </button>
+                        </div>
+                        <div class="col-4 mt-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('8')">
+                                8
+                            </button>
+                        </div>
+                        <div class="col-4 mt-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('9')">
+                                9
+                            </button>
+                        </div>
+                        <div class="col-8 mt-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('Backspace')">
+                                <-
+                            </button>
+                        </div>
+                        <div class="col-4 mt-4">
+                            <button type="button" class="btn btn-secondary btn-block numeric-keyboard" onclick="numeric_keyboard('0')">
+                                0
+                            </button>
+                        </div>
+                    </div>
+               </div>
+               <div class="col-5">
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-danger btn-block numeric-keyboard actions_buttons" onclick="reset_cashier()">
+                                Reiniciar Caja <strong>[Delete]</strong>
+                            </button>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="button" class="btn btn-success btn-block numeric-keyboard actions_buttons" onclick="manager_selecting_sale()">
+                                Procesar venta <strong>[F12]</strong>
+                            </button>
+                        </div>
+                    </div>
+               </div>
+           </div>
+        </div>
+    </div>
+</div>
+  <!-- ./wrapper -->
+  <!-- Modal cashiers -->
+<div class="modal fade" id="modal_cashier" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Cajas Abiertas</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-sm table-hover" id='table_cashiers'></table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" onclick="openNewCashier()">Abrir caja nueva</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="infoTills" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Estado actual de la caja</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              Total ventas: Bs <span id="totalbsbox"></span> / $ <span id="totalusdbox"></span>
+            </div>
+            <div class="col-md-12 text-center">
+              Total Recibido: Bs <span id="totalbsrecived"></span> / $ <span id="totalusdboxrecived"></span>
+            </div>
+            <div class="col-md-12 text-center">
+              Diferencia: Bs <span id="diferencetillBs"></span> / $ <span id="diferenceTillUsd"></span>
+            </div>
+          </div>
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Punto de venta: <span id="point_till"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Efectivo: <span id="cash_till"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Pago movil: <span id="mobile_till"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Dolares: <span id="usd_till"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Zelle: <span id="zelle_till"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Diferencia: <span id="left_till"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Crédito: <span id="credit_till"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Retención: <span id="retention_till"></span>
+            </li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="modal fade" id="selecting_type_sale" tabindex="-1" aria-labelledby="selecting_type_saleLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="selecting_type_saleLabel">Seleccione el tipo de venta</h5>
+              <button type="button" class="close" onclick="manager_selecting_sale()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-6">
+                      <button class="btn btn-info btn-block" id="paid-sell" onclick="process_sell('pay')">Venta a contado [1]</button>
+                  </div>
+                  <div class="col-md-6">
+                      <button class="btn btn-info btn-block" id="paid-sell" onclick="process_sell('credit')">Venta a crédito [2]</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="admin_password" tabindex="-1" aria-labelledby="selecting_type_saleLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="selecting_type_saleLabel">Ingrese contraseña de administrador</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group" id="form-input-password">
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-success"  id="admin_password_btn" onclick="">Confirmar</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    <!-- Modal Pay-->
+    <div class="modal fade" id="pay" tabindex="-1" aria-labelledby="pay" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Procesar Pago</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row mb-3">
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="card">
+                  <div class="card-header text-center">
+                    Seleccione los metodos de pago
+                  </div>
+                  <div class="card-body">
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="tdd" value="true">
+                      <label class="custom-control-label" for="tdd">Punto de Venta</label>
+                    </div>
+                    <hr>
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="dollarsPay" value="true">
+                      <label class="custom-control-label" for="dollarsPay">Dolares</label>
+                    </div>
+                    <hr>
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="zellePay" value="true">
+                      <label class="custom-control-label" for="zellePay">Zelle</label>
+                    </div>
+                    <hr>
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="cashBsS" value="true">
+                      <label class="custom-control-label" for="cashBsS">Efectivo Bs</label>
+                    </div>
+                    <hr>
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="mobilePay" value="true">
+                      <label class="custom-control-label" for="mobilePay">Pago Movil</label>
+                    </div>
+                    <hr>
+                    <div id="retention"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="card">
+                  <div class="card-header">Ingrese monto(s)</div>
+                  <div class="card-body">
+                    <div class="form-group row">
+                      <div id="tddAmountDiv" class="col-12"></div>
+                      <div id="dollarsAmountDiv" class="col-12"></div>
+                      <div id="zelleAmountDiv" class="col-12"></div>
+                      <div id="cashBsSAmountDiv" class="col-12"></div>
+                      <div id="mobilePaymentDiv" class="col-12"></div>
+                      <div id="specialPaymentDiv" class="col-12"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card">
+                  <div class="card-header">Resumen de venta
+                  </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-6">SubTotal:</div>
+                        <div class="col-md-6" id="subtotal"></div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-md-6">IVA:</div>
+                        <div class="col-md-6" id="total_iva"></div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-md-6">Total Bs:</div>
+                        <div class="col-md-6" id="total_tax"></div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-md-6">Total $:</div>
+                        <div class="col-md-6" id="total_usd"></div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-md-6" id="change_text">Falta:</div>
+                        <div class="col-md-6" id="change"></div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <button class="btn btn-success btn-block" data-toggle="modal" data-target="#confirmModal">Realizar venta</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">Confimar venta</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ¿Estás seguro de completar la venta?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-success"  id="close_sell">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="closeTillModal" tabindex="-1" aria-labelledby="closeTillModal" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">Cuadrar Caja</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                <div class="col-md-12 text-center mb-3">
+                  <div class="row">
+                    <div class="col-md-6 text-center">
+                      Total ventas: Bs <span id="totalbsboxclose"></span> / $ <span id="totalusdboxclose"></span><br>
+                      Total Recibido: Bs <span id="totalbsrecivedClose"></span> / $ <span id="totalusdboxrecivedClose"></span>
+                    </div>
+                    <div class="col-md-6 text-center">
+                      Diferencia: Bs <span id="diferencetillBsClose"></span> / $ <span id="diferenceTillUsdClose"></span><br>
+                      Cuentas por cobrar: Bs <span id="credit_till_close_2"></span> / $ <span id="credit_till_close_2_usd"></span><br>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Punto de venta</label>
+                    <input type="text" class="form-control" id="point_of_sell_recived" placeholder="Punto de venta Bs" value="0" onkeyup="formatInput('point_of_sell_recived')">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Efectivo</label>
+                    <input type="text" class="form-control" id="cash_recived" onkeyup="formatInput('cash_recived')" placeholder="Efectivo Bs" value="0">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Dolares</label>
+                    <input type="text" class="form-control" id="dollar_recived" placeholder="Dolares $" value="0" onkeyup="formatInput('dollar_recived')">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Pago movil</label>
+                    <input type="text" class="form-control" id="mobile_payment_recived" placeholder="Pago Movil Bs" value="0" onkeyup="formatInput('mobile_payment_recived')">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Zelle</label>
+                    <input type="text" class="form-control" id="zelle_recived" placeholder="Zelle $" value="0" onkeyup="formatInput('zelle_recived')">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Comentario</label>
+                    <textarea class="form-control" row="5" id="commentary" placeholder="Comentario"></textarea>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Punto de venta</label>
+                    <input type="text" class="form-control" id="point_till_close" placeholder="Punto de venta Bs" disabled>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Efectivo</label>
+                    <input type="text" class="form-control" id="cash_till_close" placeholder="Efectivo Bs" disabled>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Dolares</label>
+                    <input type="text" class="form-control" id="usd_till_close" placeholder="Dolares $" disabled>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Pago movil</label>
+                    <input type="text" class="form-control" id="mobile_till_close" placeholder="Pago Movil Bs" disabled>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Zelle</label>
+                    <input type="text" class="form-control" id="zelle_till_close" placeholder="Pago Movil Bs" value="0" onkeyup="formatInput('mobile_payment_recived')" disabled>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Facturas a crédito</label>
+                    <input type="text" class="form-control" id="credit_till_close" placeholder="Facturas a crédito Bs" disabled>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Retenciones</label>
+                    <input type="text" class="form-control" id="retention_till_close" placeholder="Retenciones" disabled>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" onclick="terminate_box()">Confirmar</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="print-invoice-thermal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Impresion de factura termica</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <div class="modal fade" id="modal_client" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Seleccionar cliente</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="messageTable">
+              </div>
+              <div class="row justify-content-between">
+                <div class="col-md-3">
+                  <button class="btn btn-success mb-2" id="createPartner">Nuevo Registro</button>
+                </div>
+                <div class="col-md-8">
+                  <form id="formFindPartner">
+                      <div class="input-group input-group-dropdown">
+                          <div class="input-group-btn">
+                              <select class="form-control" name="find_by" id="find_by" required>
+                                <option value="name" selected>Nombre</option>
+                                <option value="bussines_name">Razon Social</option>
+                                <option value="fiscal_id">C.I o R.I.F</option>
+                                <option value="id">ID</option>
+                              </select>
+                          </div>
+                          <div class="input-group-btn">
+                              <select class="form-control" name="order_by" id="order_by" required>
+                                      <option value="asc" selected>Ascendiente</option>
+                                      <option value="desc">Descendente</option>
+                              </select>
+                          </div>
+                          <input type="text" class="form-control" placeholder="Escriba un termino..." name="query" id="query" required>
+                      </div>
+                  </form>
+              </div>
+              </div>
+                
+                <table class="table" id="tableItems">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" style="width: 45px">ID.</th>
+                            <th scope="col" style="width: 90px">Cedula / RIF</th>
+                            <th scope="col" style="width: 130px">Nombre y Apellido / Razon Social</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients_select_table">
+                    </tbody>
+                </table>
+                <div class="row justify-content-center">
+                  <div class="col-md-1 text-right">
+                    <button class="btn btn-sm btn-outline-info" id="previousPaginationClients"><i class="fas fa-angle-double-left"></i></button>
+                  </div>
+                  <div class="col-md-1 text-center mt-1">
+                    <span id="currentPageClients"></span> / <span id="lastPageClients"></span>
+                  </div>
+                  <div class="col-md-1" class="text-left">
+                    <button class="btn-sm btn btn-outline-info"  id="nextPaginationClients"><i class="fas fa-angle-double-right"></i></button>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="modalCreateProvider" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Crear registro</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <section class="content">
+                <div class="container-fluid">
+                  <div class="row">
+                  <div class="col-3 mb-3">
+                    <a  href="/dashboard/partners/?type_partner=clients" class="btn btn-info">Listado de registros</a>
+                  </div>
+                  <div class="col-12">
+                    <!-- Default box -->
+                    <div class="card card-info card-outline card-outline-tabs">
+                    <div class="card-header p-0 border-bottom-0">
+                      <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="custom-tabs-four-home-tab" data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home" aria-selected="true">Información</a>
+                      </li>
+                      </ul>
+                    </div>
+                    <div class="card-body">
+                      <div id="message">
+                      </div>
+                      <div class="tab-content" id="custom-tabs-four-tabContent">
+                      <div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
+                          <form action="/dashboard/partners/create" method="post" id="createFormPartner">
+                          <div class="form-group clearfix">
+                            <div class="icheck-primary d-inline">
+                              <input type="radio" id="natural_person" name="type_company" value="natural_person" checked required>
+                              <label for="natural_person">
+                              Persona Natural
+                              </label>
+                            </div>
+                            <div class="icheck-primary d-inline">
+                              <input type="radio" id="company" name="type_company" value="company" required>
+                              <label for="company">
+                              Compañia
+                              </label>
+                            </div>
+                            </div>
+                            <div id="type_register_name">
+                            <label for="name">Nombre y Apellido</label>
+                            <div class="form-group form-inline">
+                              <input type="text" class="form-control col-6" id="name" placeholder="Carlos" name='name' required value="{{flashMessages.get('data.name', '')}}">
+                              <input type="text" class="form-control col-6" id="lastname" placeholder="Pérez" name='lastname' required value="{{flashMessages.get('data.lastname', '')}}">
+                            </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                              <div class="col-6">
+                                <h4 class="text-center">Información de contacto</h4>
+                                <hr>
+                                <div class="form-group">
+                                  <label>Número de contacto</label>
+                        
+                                  <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                  </div>
+                                  <input id="phone" type="text" class="form-control" data-inputmask='"mask": "(999) 999-9999"' data-mask name="phone" value="{{flashMessages.get('data.phone', '')}}" required>
+                                  </div>
+                                  <!-- /.input group -->
+                                </div>
+                                <div class="form-group">
+                                  <label for="dni">Documento de identidad</label><br>
+                                  <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                      <select id="type_fiscal_id" name="type_fiscal_id" class="custom-select" required>
+                                        <option>V</option>
+                                        <option>E</option>
+                                        <option>J</option>
+                                        <option>G</option>
+                                      </select>
+                                    </div>
+                                    <!-- /btn-group -->
+                                    <input id="dni" type="text" class="form-control" name="fiscal_id" required value="{{flashMessages.get('data.fiscal_id', '')}}">
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label>Dirección de habitación</label>
+                                  <textarea id="address" class="form-control" rows="3" placeholder="Dirección..." name="address" required>{{flashMessages.get('data.address', '')}}</textarea>
+                                </div>
+                              </div>
+                              <div class="col-6">
+                                <h4 class="text-center">Tipo de registro</h4>
+                                <hr>
+                                <div class="form-group">
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" value="true" name="client" id="client">
+                                  <label class="form-check-label">Cliente</label>
+                                </div>
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" value="true" name="provider" id="provider">
+                                  <label class="form-check-label">Proveedor</label>
+                                </div>
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" value="true" name="special_contributor" id="special_contributor">
+                                  <label class="form-check-label" for="special_contributor">Contribuyente Especial</label>
+                                </div>
+                                </div>
+                    
+                              </div>
+                              <div class="col-md-12">
+                                <button type="submit" id="submitPartner" class="btn btn-sm btn-success btn-block" id="save_register"> <i class="fas fa-save"></i> Guardar Cambios</button>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                  </div>
+                </section>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<script src="/js/cashier.js"></script>
+@include('partials/footer')

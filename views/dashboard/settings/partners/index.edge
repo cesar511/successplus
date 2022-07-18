@@ -1,0 +1,147 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<section class="content-header">
+		  <div class="container-fluid">
+			<div class="row mb-2">
+			  <div class="col-sm-6">
+				<h1 id="title">Clientes</h1>
+			  </div>
+			  <div class="col-sm-6">
+				<ol class="breadcrumb float-sm-right">
+				  <li class="breadcrumb-item active">Clientes</li>
+				</ol>
+			  </div>
+			</div>
+		  </div><!-- /.container-fluid -->
+		</section>
+	
+		<!-- Main content -->
+		<section class="content">
+		  <div class="container-fluid">
+			<div class="row">
+			  <div class="col-12">
+				<!-- Default box -->
+				<div class="card">
+				  <div class="card-header ">
+					<div class="row justify-content-between">
+					  <div class="col-3">
+						<a id="add_partner" class="btn btn-info btn-block" href="/dashboard/partners/create"><i class="fa fa-user-plus"></i> Añadir Cliente</a>
+					  </div>
+					  <div class="col-3">
+						<ul class="pagination justify-content-center" id="paginationClient"></ul>
+					  </div>
+					</div>
+				  </div>
+				  <!-- /.card-header -->
+				  <div class="card-body">
+					@if(flashMessages.get('message'))
+					<div class="col-lg-12">
+						<div class="alert alert-{{flashMessages.get('type')}}">
+							<strong>{{flashMessages.get('message')}}</strong>
+						</div>
+					</div>
+			  @endif
+					<table id="example1" class="table table-bordered table-striped">
+					  <thead>
+					  <tr>
+						<th>Documento de identidad / RIF</th>
+						<th>Nombre y Apellido / Razon Social</th>
+						<th>Número de contacto</th>
+						<th>Acciones</th>
+					  </tr>
+					  </thead>
+					  <tbody>
+						@each(partner in partners)
+							<tr class="tr-items-sells" id="itemEdit" onclick="window.location = '/dashboard/partners/view/{{partner.id}}'">
+								<th scope="row">{{partner.fiscal_id}}</th>
+								@if(!partner.bussines_name)
+									<td id="name">{{capitalCase(partner.name)}} {{capitalCase(partner.lastname)}}</td>
+								@else
+									<td id="name">{{capitalCase(partner.bussines_name)}}</td>
+								@endif
+								<td id="lastname">{{partner.phone}}</td>
+								<td id="lastname">{{partner.phone}}</td>
+							</tr>
+						@endeach
+					  </tbody>
+					</table>
+					<div class="card-footer">
+					  <div class="row">
+						<div class="col-md-12">
+							<form class="mt-2" method="POST" action="/dashboard/partners/{{type_partner}}/search">
+								<div class="form-row">
+								<div class="form-group col-md-6">
+									<select class="form-control form-control-sm" id="filterBy" name="find_by">
+										<option value="name">Nombre</option>
+										<option value="lastname">Nombre</option>
+										<option value="bussines_name">Razon Social</option>
+										<option value="fiscal_id">C.I o RIF</option>
+									</select>
+								</div>
+								<div class="form-group col-md-6">
+									<input type="text" class="form-control form-control-sm" id="filterIn" name="query">
+								</div>
+								</div>
+								<div class="form-row">
+									<div class="form-group col-md-4">
+									<input type="text" class="form-control form-control-sm" value="Ordenar por:" disabled>
+									</div>
+									<div class="form-group col-md-4">
+										<select class="form-control form-control-sm" id="orderBy">
+											<option value="1">Ascendente</option>
+											<option value="-1">Descendente</option>
+										</select>
+									</div>
+									<div class="form-group col-md-2">
+										<button type="submit" class="btn btn-primary btn-block btn-sm" id="searchPartners"> <i class="fas fa-search"></i> Buscar</button>
+									</div>
+									<div class="form-group col-md-2">
+										<button type="button" class="btn btn-warning btn-block btn-sm text-dark" id="resetSearch"> <i class="fas fa-eraser"></i> Limpiar</button>
+									</div>
+								</div>
+							</form>
+						</div>
+						
+				  </div>
+				  
+				  <div class="row justify-content-end mb-2">
+					<div class="col-md-1 text-right">
+						@if(partners.currentPage == 1)
+							<a href="/dashboard/partners/{{type_partner}}/page/1"><i class="fas fa-angle-double-left"></i></a>
+						@else
+							<a href="/dashboard/partners/{{type_partner}}/page/{{partners.currentPage - 1}}"><i class="fas fa-angle-double-left"></i></a>
+						@endif
+					</div>
+					<div class="col-md-1 text-center">
+						{{partners.currentPage}} / {{partners.lastPage}}
+					</div>
+					<div class="col-md-1" class="text-left">
+						@if(partners.lastPage == partners.currentPage)
+							<a href="/dashboard/partners/{{type_partner}}/page/{{partners.lastPage}}"><i class="fas fa-angle-double-right"></i></a>
+						@else
+							<a href="/dashboard/partners/{{type_partner}}/page/{{partners.currentPage + 1}}"><i class="fas fa-angle-double-right"></i></a>
+						@endif
+					</div>
+				</div>
+				  <!-- /.card-body -->
+				</div>
+				<!-- /.card -->
+			  </div>
+			</div>
+		  </div>
+		</section>
+		<!-- /.content -->
+	  </div>
+</div>
+
+@include('partials/footer')

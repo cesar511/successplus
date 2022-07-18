@@ -1,0 +1,89 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 id="title"><i class="fa fa-info-circle"></i> Registro de pagos <span id="name_partner"></span></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-payment active"><a href="clients.html">Registro de pagos</a></li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <!-- Default box -->
+            <div class="card">
+                  <div class="card-body card-body-table" id="cardItems">
+                  <table class="table table-head-fixed" id="tableItems">
+                    <thead class="">
+                        <tr>
+                            <th style="width: 60px;" scope="col-1">REF</th>
+                            <th style="width: 120px;"scope="col">Fecha</th>
+                            <th scope="col">Efectivo</th>
+                            <th scope="col">Efectivo $</th>
+                            <th scope="col">Zelle</th>
+                            <th scope="col">Pago Movil</th>
+                            <th scope="col">Punto de Venta</th>
+                            <th scope="col">Retención</th>
+                            <th scope="col">Transacción N°</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-items">
+                        @each(payment in payments)
+                            <tr>
+                                <th scope="row">{{payment.id}}</th>
+                                <td>{{payment.created_at}}</td>
+                                <td>{{payment.cash}}</td>
+                                <td>{{payment.dollar}}</td>
+                                <td>{{payment.zelle}}</td>
+                                <td>{{payment.movil_payment}}</td>
+                                <td>{{payment.point_of_sale}}</td>
+                                <td>{{payment.retention}}</td>
+                                @if(payment.sale_id)
+                                  <td><a href="/dashboard/purchases/view/{{payment.sale_id}}">Venta {{payment.sale_id}}</a></td>
+                                @else 
+                                  <td><a href="/dashboard/purchases/view/{{payment.purchase_id}}">Compra {{payment.purchase_id}}</a></td>
+                                @endif
+                            </tr>
+                        @endeach
+                    </tbody>
+                  </table>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <div class="row justify-content-center">
+                  <div class="col-1">
+                    <ul class="pagination pagination-sm m-0 float-right">
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  
+  <!-- /.content-wrapper -->
+@include('partials/footer')

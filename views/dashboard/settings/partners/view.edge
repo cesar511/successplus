@@ -1,0 +1,209 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<section class="content-header">
+			<div class="container-fluid">
+			  <div class="row mb-2">
+				<div class="col-sm-6">
+				  <h1 id="title"><i class="fa fa-user-plus"></i>Modificar registro</h1>
+				</div>
+			  </div>
+			</div><!-- /.container-fluid -->
+		  </section>
+	  
+		  <!-- Main content -->
+		  <section class="content">
+			<div class="container-fluid">
+			  <div class="row">
+				<div class="col-12">
+				  <!-- Default box -->
+				  <div class="card card-info card-outline card-outline-tabs">
+					<div class="card-header p-0 border-bottom-0">
+					  <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+						<li class="nav-item">
+						  <a class="nav-link active" id="custom-tabs-four-home-tab" data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home" aria-selected="true">Información</a>
+						</li>
+					  </ul>
+					</div>
+					<div class="card-body">
+						@if(flashMessages.get('message'))
+                              <div class="col-lg-12">
+                                  <div class="alert alert-{{flashMessages.get('type')}}">
+                                      <strong>{{flashMessages.get('message')}}</strong>
+                                  </div>
+                              </div>
+                        @endif
+					  <div class="tab-content" id="custom-tabs-four-tabContent">
+						<div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
+						  	<form action="/dashboard/partners/update/{{partner.id}}" method="post">
+								<div class="form-group clearfix">
+									<div class="icheck-primary d-inline">
+                                    @if(partner.bussines_name === null)
+									  <input type="radio" id="natural_person" name="type_company" value="natural_person" checked required>
+                                    @else
+									  <input type="radio" id="natural_person" name="type_company" value="natural_person" required>
+                                    @endif
+									  <label for="natural_person">
+										Persona Natural
+									  </label>
+									</div>
+									<div class="icheck-primary d-inline">
+                                    @if(partner.bussines_name != null)
+									  <input type="radio" id="company" name="type_company" value="company" checked required>
+                                    @else
+									  <input type="radio" id="company" name="type_company" value="company" required>
+                                    @endif
+									  <label for="company">
+										Compañia
+									  </label>
+									</div>
+								  </div>
+								  <div id="type_register_name">
+                                    @if(partner.bussines_name)
+                                    <label for="social_rason">Razon social</label>
+                                    <div class="form-group form-inline">
+                                    <input type="text" class="form-control col-12" id="social_reason" placeholder="Razón social C.A" name="bussines_name" value="{{partner.bussines_name}}" required>
+                                    </div>
+                                    @else
+									<label for="name">Nombre y Apellido</label>
+									<div class="form-group form-inline">
+									  <input type="text" class="form-control col-6" id="name" placeholder="Carlos" name='name' required value="{{partner.name}}">
+									  <input type="text" class="form-control col-6" id="lastname" placeholder="Pérez" name='lastname' required value="{{partner.lastname}}">
+									</div>
+                                    @endif
+								  </div>
+								  <hr>
+								  <div class="row">
+									  <div class="col-6">
+										  <h4 class="text-center">Información de contacto</h4>
+										  <hr>
+										  <div class="form-group">
+											  <label>Número de contacto</label>
+							
+											  <div class="input-group">
+												<div class="input-group-prepend">
+												  <span class="input-group-text"><i class="fas fa-phone"></i></span>
+												</div>
+												<input id="phone" type="text" class="form-control" data-inputmask='"mask": "(999) 999-9999"' data-mask name="phone" value="{{partner.phone}}" required>
+											  </div>
+											  <!-- /.input group -->
+										  </div>
+										  <div class="form-group">
+											  <label for="dni">Documento de identidad</label><br>
+											  <div class="input-group mb-3">
+												  <div class="input-group-prepend">
+													  <select id="type_fiscal_id" name="type_fiscal_id" class="custom-select" required>
+                                                            @if(partner.type_fiscal_id == 'V')
+                                                                <option selected>V</option>
+                                                            @else
+                                                                <option>V</option>
+                                                            @endif
+                                                            @if(partner.type_fiscal_id == 'E')
+                                                                <option selected>E</option>
+                                                            @else
+                                                                <option>E</option>
+                                                            @endif
+                                                            @if(partner.type_fiscal_id == 'J')
+                                                                <option selected>J</option>
+                                                            @else 
+                                                                <option>J</option>
+                                                            @endif
+                                                            @if(partner.type_fiscal_id == 'G')
+                                                                <option selected>G</option>
+                                                            @else
+                                                                <option>G</option>
+                                                            @endif
+													  </select>
+												  </div>
+												  <!-- /btn-group -->
+												  <input id="dni" type="text" class="form-control" name="fiscal_id" required value="{{partner.fiscal_id}}">
+											  </div>
+										  </div>
+										  <div class="form-group">
+											  <label>Dirección de habitación</label>
+											  <textarea id="address" class="form-control" rows="3" placeholder="Dirección..." name="address" required>{{partner.address}}</textarea>
+										  </div>
+									  </div>
+									  <div class="col-6">
+										  <h4 class="text-center">Tipo de registro</h4>
+										  <hr>
+										  <div class="form-group">
+											<div class="form-check">
+                                              @if(partner.client)
+											    <input class="form-check-input" type="checkbox" value="true" name="client" id="client" checked>
+                                              @else
+                                                <input class="form-check-input" type="checkbox" value="true" name="client" id="client">
+                                              @endif
+											  <label class="form-check-label">Cliente</label>
+											</div>
+											<div class="form-check">
+                                              @if(partner.provider)
+                                              <input class="form-check-input" type="checkbox" value="true" name="provider" id="provider" checked>
+                                              @else
+                                              <input class="form-check-input" type="checkbox" value="true" name="provider" id="provider">
+                                              @endif
+											  <label class="form-check-label">Proveedor</label>
+											</div>
+										  </div>
+										  <hr>
+										  <div class="form-group">
+											<div class="form-check">
+                                              @if(partner.special_contributor)
+                                              <input class="form-check-input" type="checkbox" value="true" name="special_contributor" id="special_contributor" checked>
+                                              @else
+                                              <input class="form-check-input" type="checkbox" value="true" name="special_contributor" id="special_contributor">
+                                              @endif
+											  <label class="form-check-label" for="special_contributor">Contribuyente Especial</label>
+											</div>
+										  </div>
+				  
+									  </div>
+									  <div class="col-md-12">
+										  <button type="submit" class="btn btn-sm btn-success btn-block" id="save_register"> <i class="fas fa-save"></i> Guardar Cambios</button>
+									  </div>
+                                      <div class="col-md-6 mt-3">
+                                        <button type="button" class="btn btn-sm btn-danger btn-block" id="save_register" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-trash"></i> Eliminar registro</button>
+                                        </div>
+								  </div>
+								</div>
+							</form>
+					  </div>
+					<!-- /.card-body -->
+				  </div>
+				  <!-- /.card -->
+				</div>
+		  </section>
+		<!-- /.content -->
+	  </div>
+	</div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Eliminar registro</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Esta seguro que desea eliminar el registro? Para deshacer esta accion, debera contactar con soporte tecnico.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <a type="button" class="btn btn-danger" href="/dashboard/partners/delete/{{partner.id}}">Elimina registro</a>
+        </div>
+      </div>
+    </div>
+</div>
+
+@include('partials/footer')

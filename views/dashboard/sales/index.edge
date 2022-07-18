@@ -1,0 +1,138 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 id="title">Ventas</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item active">Ventas</li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <!-- Default box -->
+              <div class="card">
+                <div class="card-header ">
+                  <div class="row justify-content-between">
+                    <div class="col-3">
+                      <ul class="pagination pagination-sm m-0 float-right">
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body card-body-table">
+                  <table id="tableRegister" class="table table-bordered table-striped">
+                    <thead class="">
+                      <tr>
+                          <th style="width: 60px;" scope="col">REF.</th>
+                          <th style="width: 100px;" scope="col">Estado</th>
+                          <th scope="col" style="width: 200px">Cliente</th>
+                          <th scope="col">RIF</th>
+                          <th scope="col">Fecha</th>
+                          <th scope="col">Factura</th>
+                          <th scope="col">Nota</th>
+                          <th scope="col" style="width: 200px">Tasa</th>
+                          <th scope="col" style="width: 200px;">Total Bs</th>
+                          <th scope="col" style="width: 200px;">Total $</th>
+                      </tr>
+                  </thead>
+                  <tbody id="body-items">
+                    @each(sale in sales)
+                    <tr class="tr-items-sells ${state}" onclick="viewSales('{{sale.id}}')">
+                      <th scope="row">{{sale.id}}</th>
+                      @if(sale.state == 'canceled')
+                      <td><span class="badge badge-danger">Cancelada</span></td>
+                      @elseif(sale.state == 'paid')
+                      <td><span class="badge badge-success">Pagada</span></td>
+                      @elseif(sale.state == 'no_paid')
+                      <td><span class="badge badge-warning">Por pagar</span></td>
+                      @endif
+                      <td>{{capitalCase(sale.partner_name)}} {{capitalCase(sale.partner_lastname)}} {{capitalCase(sale.partner_bussines_name)}}</td>
+                      <td>{{sale.partner_fiscal_id}}</td>
+                      <td>{{sale.created_at}}</td>
+                      <td>{{sale.number_invoice}}</td>
+                      <td>{{sale.number_note}}</td>
+                      <td>{{(sale.tasa)}}</td>
+                      <td>{{(sale.total_bs)}}</td>
+                      <td>{{(sale.total_dollar)}}</td>
+                    </tr>
+                    @endeach
+                  </tbody>
+                  </table>
+                </div>
+                <div class="card-footer">
+                  <div class="row">
+                      <div class="col-md-12">
+                          <div class="mt-2">
+                              <div class="form-row">
+                                <div class="form-group col-md-6">
+                                  <select class="form-control form-control-sm" id='filterBy'>
+                                    <option value="invoice">Factura</option>
+                                    <option value="note">Nota</option>
+                                    <option value='state'>Estado</option>
+                                    <option value="date">Fecha</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6" id="filterInInput">
+                                  <input type="text" class="form-control form-control-sm" id="filterIn">
+                                </div>
+                              </div>
+                              <div class="form-row">
+                                  <div class="form-group col-md-3">
+                                    <select class="form-control form-control-sm">
+                                        <option>Ordenar por</option>
+                                      </select>
+                                  </div>
+                                  <div class="form-group col-md-3">
+                                      <select class="form-control form-control-sm" id="orderBy">
+                                          <option value="1">Ascendente</option>
+                                          <option value="-1">Descendente</option>
+                                        </select>
+                                  </div>
+                                  <div class="form-group col-md-3">
+                                      <button id="searchItems" type="button" class="btn btn-info btn-block btn-sm"><i class="fas fa-search"></i>Buscar</button>
+                                  </div>
+
+                                  <div class="form-group col-md-3">
+                                      <button id="resetSearch" type="button" class="btn btn-warning ml-0 btn-sm btn-block">Limpiar <i class="fas fa-undo-alt"></i></button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+          </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+        </div>
+      </section>
+      <script>
+        const viewSales = (id) => {
+            location.href = `/dashboard/sales/view/${id}`;
+        }
+      </script>
+      <!-- /.content -->
+@include('partials/footer')

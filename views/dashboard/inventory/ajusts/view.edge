@@ -1,0 +1,127 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 id="title">Detalles de ajuste de inventario. <span id="id_purchase"></span></h1>
+          </div>
+          <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-item active"><a href="adjusts.html">Ajuste de inventario</a></li>
+                  <li class="breadcrumb-item active">Detalles: <span id="id_ajust"></span></li>
+              </ol>  
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-5 mb-2" id="buttons">
+                  @if(ajust.state == 'Completado')
+                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmCancel"><i class="fa fa-ban"></i> Cancelar Ajuste</button>
+                    <a class="btn btn-info btn-sm col-4 mr-1" href="/dashboard/print/ajust/{{ajust.id}}" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
+                  @elseif(ajust.state == 'Cancelado')
+                    <a class="btn btn-info btn-sm col-4 mr-1" href="/dashboard/print/ajust/{{ajust.id}}" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
+                  @endif
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <!-- Default box -->
+            <div class="card">
+              <!-- /.card-header -->
+              <div class="card-body">
+                  <div class="row">
+                      <div class="col-6">
+                          <p><strong>Auditor: </strong><span id="auditor">{{ajust.auditor_name}} {{ajust.auditor_lastname}}</span></p>
+                          <p><strong>Observación: </strong><span id="comment">{{ajust.comment}}</span></p>
+                          <p><strong>Fecha: </strong><span id="date_adjust">{{ajust.date}}</span></p>
+                          <p><strong>Estado: </strong><span id="state">{{ajust.state}}</span></p>
+                      </div>
+                  </div>
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <div class="card card-body-table">
+              <div class="card-body p-0">
+                <div class="col-md-12">
+                  <div class="table-responsive">
+                    <table class="table table-bordered mr-0 ">
+                      <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Cat.</th>
+                            <th scope="col">Marca</th>
+                            <th scope="col">Cant. I</th>
+                            <th scope="col">Cant. Ajustada</th>
+                            <th scope="col">Cant. Final</th>
+                            <th scope="col">Costo $</th>
+                        </tr>
+                      </thead>
+                      <tbody id="body-items">
+                        @each(item in items_lines)
+                        <tr>
+                            <th scope="col">{{capitalCase(item.name)}}</th>
+                            <th scope="col">{{capitalCase(item.category_name)}}</th>
+                            <th scope="col">{{capitalCase(item.brand_name)}}</th>
+                            <th scope="col">{{item.initial_amount}}</th>
+                            <th scope="col">{{item.amount}}</th>
+                            <th scope="col">{{item.amount + item.initial_amount}}</th>
+                            <th scope="col">{{item.price}}</th>
+                        </tr>
+                        @endeach
+                      </tbody>
+                    </table>
+                  </div>       
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <div class="modal fade" id="confirmCancel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">¿Está seguro de cancelar este ajuste?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            ¿Está seguro de cancelar este ajuste?, esta acción es irreversible.
+            <input type="text" hidden id="idCancel">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" onclick="cancel('{{ajust.id}}')">Proceder</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/view_ajust_details.js"></script>
+
+@include('partials/footer')

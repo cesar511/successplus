@@ -1,0 +1,339 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    @include('partials/menu')
+    <!-- /.navbar -->
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    @set('rates', await rates())
+    @set('company', await company())
+    <input type="text" value="{{sale.id}}" id="id_sale" hidden>
+    <input type="text" value="{{sale.taxes}}" id="tax_total" hidden>
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 id="title">Ver venta {{sale.id}}</h1>
+          </div>
+          <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-line active"><a href="/dashboard/sales/index">Ventas </a> </li>
+                  <li class="breadcrumb-line active"> / Compra: {{sale.id}}</li>
+              </ol>  
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row" id="buttons">
+              <input type="text" id="company_retention" value="{{company.special_taxpayer}}" hidden>
+              <input type="text" id="current_rate_sale" value="{{rates.rate_sale}}" hidden>
+              <input type="text" id="partner_special_contributor" value="{{partner.special_contributor}}" hidden>
+              <input type="text" id="rate_sale" value="{{sale.rate}}" hidden>
+              <input type="text" id="total" value="{{sale.total}}" hidden>
+              <input type="text" id="tax" value="{{sale.taxes}}" hidden>
+              @if(sale.state != 'canceled')
+                <div class="col-2 mb-2">
+                  <button type="button" class="btn btn-danger btn-sm btn-block" data-toggle="modal" data-target="#confirmModalCancel"><i class="fa fa-ban"></i> Cancelar </button>
+                </div>
+              @endif
+              @if(sale.state == 'no_paid')
+                <div class="col-2 mb-2">
+                  <button type="button" class="btn btn-success btn-sm btn-block" data-toggle="modal" onclick="showPayments('${data.sale.total_dollar * data.sale.tasa}', '${data.sale.total_dollar}')"><i class="fa fa-hand-holding-usd"></i> Pagar</button>
+                </div>
+              @endif
+            </div>
+          </div>
+          <div class="col-12">
+            <!-- Default box -->
+            <div class="card">
+              <!-- /.card-header -->
+              <div class="card-body">
+                  <div class="row">
+                      <div class="col-3">
+                          <input type="text" hidden value="{{sale.id}}"  id="id_sale">
+                          <p><strong>Referencia:</strong> {{sale.id}}</p>
+                          @if(sale.lastname)
+                          <p><strong>Cliente: </strong> {{sale.name}} {{sale.lastname}}</p>
+                          @else
+                          <p><strong>Cliente: </strong> {{sale.bussines_name}}</p>
+                          @endif
+                          @if(sale.condition == 'count')
+                            <p><strong>Condición: </strong>Contado</p>
+                          @else
+                            <p><strong>Condición: </strong>A credito</p>
+                          @endif
+                          @if(sale.state == 'no_paid')
+                            <p><strong>Estado: </strong><span class="badge badge-warning">Por Pagar</span></p>
+                          @elseif(sale.state == 'canceled')
+                          <p><strong>Estado: </strong><span class="badge badge-danger">Cancelada</span></p>
+                          @else
+                            <p><strong>Estado: </strong><span class="badge badge-success">Pagada</span></p>
+                          @endif
+                          <p><strong>Fecha de creación: </strong>{{sale.created_at}}</p>
+                          <p><strong>Fecha de pago:</strong> {{sale.date_paid}}</p>
+                      </div>
+                      <div class="col-3">
+                          <p><strong>Cantidad de artículos: </strong>{{sale.items_amount}}</p>
+                          <p><strong>Tasa: </strong>{{sale.tasa}}</p>
+                          <p><strong>IVA: </strong>{{sale.tax}}</p>
+                          <p><strong>Retención: </strong>{{payment.retention}}</p>
+                          <p><strong>Total: </strong>{{sale.total_dollar}}</p>
+                      </div>
+                      <div class="col-5">
+                        @if(payment)
+                          <p><strong>Efectivo: </strong><span id="cash">{{payment.cash}}</span></p>
+                          <p><strong>Punto de venta: </strong><span id="point_sell">{{payment.point_of_sale}}</span></p>
+                          <p><strong>Pago Movil: </strong><span id="mobile_payment">{{payment.movil_payment}}</span></p>
+                          <p><strong>Zelle: </strong><span id="zelle">{{payment.zelle}}</span></p>
+                          <p><strong>Efectivo: </strong><span id="usd">{{payment.dollar}}</span></p>
+                          <p><strong>Diferencia: </strong> {{sale.leftover_bs}} / {{sale.leftover_usd}}</span></p>
+                        @else
+                          <p><strong>Efectivo: </strong><span id="cash">Bs.S 0,00</span></p>
+                          <p><strong>Punto de venta: </strong><span id="point_sell">Bs.S 0,00</span></p>
+                          <p><strong>Pago Movil: </strong><span id="mobile_payment">Bs.S 0,00</span></p>
+                          <p><strong>Zelle: </strong><span id="zelle">Bs.S 0,00</span></p>
+                          <p><strong>Efectivo: </strong><span id="usd">Bs.S 0,00</span></p>
+                          <p><strong>Diferencia: </strong>.S 0,00</span></p>
+                        @endif
+                        
+                      </div>
+                  </div>
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <div class="card card-body-table">
+              <div class="card-body p-0">
+                <div class="col-md-12">
+                    <table class="table table-bordered mr-0">
+                        <thead>
+                          <tr>
+                            <th style="width: 80px">REF.</th>
+                            <th>Nombre</th>
+                            <th>Categoria</th>
+                            <th style="width: 200px">Marca</th>
+                            <th>Cantidad</th>
+                            <th>IVA</th>
+                            <th>Base Imponible</th>
+                            <th>Costo</th>
+                            <th>Costo</th>
+                          </tr>
+                        </thead>
+                        <tbody id="items">
+                        @each(line in sales_lines)
+                        <tr>
+                            <td>{{line.id}}</td>
+                            <td>{{capitalCase(line.item_name)}}</td>
+                            <td>{{capitalCase(line.item_brand)}}</td>
+                            <td class="col-auto">{{capitalCase(line.item_category)}}</td>
+                            <td>{{line.amount}}</td>
+                            <td>{{line.tax}}</td>
+                            <td>{{line.tax_base}}</td>
+                            <td>{{line.cost}}</td>
+                            <td>{{line.total_dollar}}</td>
+                        </tr>
+                        @endeach
+                        </tbody>
+                      </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <div class="modal fade" id="confirmModalCancel" tabindex="-1" aria-labelledby="confirmModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confimar cancelación de compra</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <input type="text" id="id_cancel" hidden>
+          ¿Estás seguro de cancelar la venta?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Regresar</button>
+          <a type="button" class="btn btn-success" href="/dashboard/sales/cancel/{{sale.id}}">Confirmar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confirmar Pago</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Regresar</button>
+          <button type="button" class="btn btn-success"  onclick="paysale()"><i class="fas fa-check"></i> Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="pay" tabindex="-1" aria-labelledby="pay" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Procesar Pago</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="card">
+              <div class="card-body">
+                <form class="form-inline">
+                  <input type="text" id="id_pay" hidden>
+                  <div class="custom-control custom-radio mb-3">
+                  <input type="radio" class="custom-control-input" id="customControlValidation2" name="radio-stacked" onclick="changeTasasale('previous')" required>
+                  <label class="custom-control-label" for="customControlValidation2"><span id="previous_change"></span> </label>
+                </div>
+                <div class="custom-control custom-radio mb-3">
+                  <input type="radio" class="custom-control-input" id="customControlValidation3" name="radio-stacked" onclick="changeTasasale('current')"  required>
+                  <label class="custom-control-label" for="customControlValidation3" id="current_change"></label>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="card">
+                <div class="card-header text-center">
+                  Seleccione los metodos de pago
+                </div>
+                <div class="card-body">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="tdd" value="true">
+                    <label class="custom-control-label" for="tdd">Punto de Venta</label>
+                  </div>
+                  <hr>
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="dollarsPay" value="true">
+                    <label class="custom-control-label" for="dollarsPay">Dolares</label>
+                  </div>
+                  <hr>
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="zellePay" value="true">
+                    <label class="custom-control-label" for="zellePay">Zelle</label>
+                  </div>
+                  <hr>
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="cashBsS" value="true">
+                    <label class="custom-control-label" for="cashBsS">Efectivo</label>
+                  </div>
+                  <hr>
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="mobilePay" value="true">
+                    <label class="custom-control-label" for="mobilePay">Pago Movil</label>
+                  </div>
+                  <hr>
+                  <div id="retention"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="card">
+                <div class="card-header">Ingrese monto(s)</div>
+                <div class="card-body">
+                  <div class="form-group row">
+                    <div id="tddAmountDiv" class="col-12"></div>
+                    <div id="dollarsAmountDiv" class="col-12"></div>
+                    <div id="zelleAmountDiv" class="col-12"></div>
+                    <div id="cashBsSAmountDiv" class="col-12"></div>
+                    <div id="mobilePaymentDiv" class="col-12"></div>
+                    <div id="specialPaymentDiv" class="col-12"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-header">Resumen de compra
+                </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-6">SubTotal:</div>
+                      <div class="col-md-6" id="subtotal"></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-md-6">IVA:</div>
+                      <div class="col-md-6" id="total_iva"></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-md-6">Total:</div>
+                      <div class="col-md-6" id="total_tax"></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-md-6">Total:</div>
+                      <div class="col-md-6" id="total_usd_pay"></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-md-6" id="change_text">Falta:</div>
+                      <div class="col-md-6" id="change"></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <button class="btn btn-success btn-block" onclick="close_pay()">Pagar venta</button>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+  <div class="modal fade" id="confirmModal" tabindex="1" aria-labelledby="confirmModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confimar pago de cuenta por pagar</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro de completar el pago?, Recuerde que esta acción es irreversible
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" onclick="close_sale()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/view_sell.js"></script>
+  @include('partials/footer')

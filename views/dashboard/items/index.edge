@@ -1,0 +1,310 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 id="title">Artículos</h1>
+                </div>
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active">Artículos</li>
+                  </ol>
+                </div>
+              </div>
+            </div><!-- /.container-fluid -->
+          </section>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                  <div class="col-12">
+                    <!-- Default box -->
+                    <div class="card card-body-table">
+                      <!-- /.card-header -->
+                      <div class="card-header">
+                          <div class="row">
+                              <div class="col-4">
+                                  <button class="btn btn-info add-button" data-toggle="modal" data-target="#itemsModal"><i class="fas fa-plus"></i> Añadir artículo</button>
+                              </div>
+                              <div class="col-auto my-auto ml-auto">
+                                <ul class="pagination justify-content-center" id="pagination"></ul>
+                                </div>
+                          </div>
+
+                        
+                      </div>
+                      <div class="card-body">
+                        <div id='message'>
+                          @if(flashMessages.get('message'))
+                              <div class="col-lg-12">
+                                  <div class="alert alert-{{flashMessages.get('type')}}">
+                                      <strong>{{flashMessages.get('message')}}</strong>
+                                  </div>
+                              </div>
+                          @endif
+                        </div>
+                        <table class="table table-head-fixed text-nowrap">
+                            <thead>
+                                <tr>
+                                <th scope="col">ID </th>
+                                <th scope="col">Nombre </th>
+                                <th scope="col">Marca </th>
+                                <th scope="col">Categoria </th>
+                                <th scope="col">Ubicacion </th>
+                                <th scope="col">Acciones </th>
+                                </tr>
+                            </thead>
+                            <tbody id="items">
+                                @each(item in items)
+                                    <tr class="tr-items-sells" id="itemEdit">
+                                        <th scope="row">{{item.id}}</th>
+                                        <th>{{capitalCase(item.name)}}</th>
+                                        <th>{{capitalCase(item.brand_name)}}</th>
+                                        <th>{{capitalCase(item.category_name)}}</th>
+                                        <th>{{capitalCase(item.location_name)}}</th>
+                                        <td><button class="btn btn-info btn-sm" onclick="editItem('{{stringify(item)}}','{{stringify(brands)}}','{{stringify(categories)}}','{{stringify(locations)}}')"><i class="fas fa-pencil-alt"></i></button><button class="btn btn-danger ml-2 btn-sm" onclick="deleteItem('{{item.id}}')"><i class="fas fa-trash-alt"></i></button></td>
+                                    </tr>
+                                @endeach
+                            </tbody>
+                        </table>
+                        
+                      </div>
+                      
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                      <div class="col-md-12">
+                          <form action="/dashboard/items/search" method="GET" class="mt-2">
+                              <div class="form-row">
+                              <div class="form-group col-md-6">
+                                  <select class="form-control form-control-sm" id="filter_by" name="find_by" onchange="change_query('{{stringify(brands)}}','{{stringify(categories)}}','{{stringify(locations)}}')">
+                                      <option value="name">Nombre</option>
+                                      <option value="id">ID</option>
+                                      <option value="category_id">Categoria</option>
+                                      <option value="brand_id">Marca</option>
+                                      <option value="location_id">Ubicacion</option>
+                                  </select>
+                              </div>
+                              <div class="form-group col-md-6" id="filter_in_type">
+                                  <input type="text" class="form-control form-control-sm" id="filter_in" name="query">
+                              </div>
+                              </div>
+                              <div class="form-row">
+                                  <div class="form-group col-md-4">
+                                  <input type="text" class="form-control form-control-sm" value="Ordenar por:" disabled>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                      <select class="form-control form-control-sm" id="order_by" name="order_by">
+                                          <option value="asc">Ascendente</option>
+                                          <option value="desc">Descendente</option>
+                                      </select>
+                                  </div>
+                                  <div class="form-group col-md-2">
+                                      <button type="submit" class="btn btn-primary btn-block btn-sm" id="searchItems"> <i class="fas fa-search"></i> Buscar</button>
+                                  </div>
+                                  <div class="form-group col-md-2">
+                                      <a href="/dashboard/items/" class="btn btn-warning btn-block btn-sm text-dark" id="resetSearch"> <i class="fas fa-eraser"></i> Limpiar</a>
+                                  </div>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+                  <div class="row justify-content-end mb-2">
+                    <div class="col-md-1 text-right">
+                        @if(items.currentPage == 1)
+                            <a href="/dashboard/items/page/1"><i class="fas fa-angle-double-left"></i></a>
+                        @else
+                            <a href="/dashboard/items/page/{{items.currentPage - 1}}"><i class="fas fa-angle-double-left"></i></a>
+                        @endif
+                    </div>
+                    <div class="col-md-1 text-center">
+                        {{items.currentPage}} / {{items.lastPage}}
+                    </div>
+                    <div class="col-md-1" class="text-left">
+                        @if(items.lastPage == items.currentPage)
+                            <a href="/dashboard/items/page/{{items.lastPage}}"><i class="fas fa-angle-double-right"></i></a>
+                        @else
+                            <a href="/dashboard/items/page/{{items.currentPage + 1}}"><i class="fas fa-angle-double-right"></i></a>
+                        @endif
+                    </div>
+                </div>
+                </div>
+              </div>
+        </div>
+    </div>
+    <div class="modal fade" id="itemsModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="itemsModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Añadir Items</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <form action="/dashboard/items/create" method="POST">
+                    <div class="form-group row">
+                        <label for="name" class="col-md-2 col-form-label">Nombre</label>
+                        <div class="col-md-10">
+                          <input type="text" class="form-control" id="id" hidden>
+                          <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="category" class="col-md-2 col-form-label">Categoria</label>
+                      <div class="col-md-10">
+                        <select type="text" class="form-control" id="category" name="category_id">
+                            @each(category in categories)
+                                <option value="{{category.id}}">{{capitalCase(category.name)}}</option>
+                            @endeach
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="measurement" class="col-md-2 col-form-label">Medida</label>  
+                        <div class="col-md-10">
+                            <select class="form-control" id="measurement" name="measurement">
+                              <option value="Kg">Kg</option>
+                              <option value="Litros">Litros</option>
+                              <option value="Unidades">Unidades</option>
+                            </select>
+                        </div>
+                      </div>
+                    <div class="form-group row">
+                        <label for="brand" class="col-md-2 col-form-label">Marca</label>
+                        <div class="col-md-10">
+                            <select type="text" class="form-control" id="brand" name="brand_id">
+                                @each(brand in brands)
+                                    <option value="{{brand.id}}">{{capitalCase(brand.name)}}</option>
+                                @endeach
+                            </select>
+                        </div>
+                      </div>
+		            <div class="form-group row">
+                        <label for="costing_method" class="col-md-2 col-form-label">Método de costeo</label>  
+                        <div class="col-md-10">
+                            <select class="form-control" id="costing_method" name="costing_method">
+                                <option value="average">Promedio</option>
+                                <option value="mayor">Mayor</option>
+                                <option value="last">Último</option>
+                            </select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="measurement" class="col-md-2 col-form-label">Ubicación</label>  
+                        <div class="col-md-10">
+                            <select class="form-control" id="item" name="location_id">
+                                @each(location in locations)
+                                    <option value="{{location.id}}">{{capitalCase(location.name)}}</option>
+                                @endeach
+                            </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="addItem">Confirmar</button>
+                    </form>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalEdit" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalEdit" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Editar Item</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <form action="/dashboard/items/update" method="POST">
+                    <div class="form-group row">
+                        <label for="name" class="col-md-2 col-form-label">Nombre</label>
+                        <div class="col-md-10">
+                        <input type="text" class="form-control" id="idEdit" hidden name="id">
+                        <input type="text" class="form-control" id="nameEdit" name="name">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="category" class="col-md-2 col-form-label">Categoria</label>
+                        <div class="col-md-10">
+                          <select type="text" class="form-control" id="categoryEdit" name="category_id">
+                          </select>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="measurement" class="col-md-2 col-form-label">Medida</label>  
+                          <div class="col-md-10">
+                              <select class="form-control" id="measurementEdit" name="measurement">
+                                <option value="Kg">Kg</option>
+                                <option value="Litros">Litros</option>
+                                <option value="Unidades">Unidades</option>
+                              </select>
+                          </div>
+                        </div>
+                      <div class="form-group row">
+                          <label for="brand" class="col-md-2 col-form-label">Marca</label>
+                          <div class="col-md-10">
+                              <select type="text" class="form-control" id="brandEdit" name="brand_id">
+                              </select>
+                          </div>
+                        </div>
+                      <div class="form-group row">
+                          <label for="costing_method" class="col-md-2 col-form-label">Método de costeo</label>  
+                          <div class="col-md-10">
+                              <select class="form-control" id="costingMethodEdit" name="costing_method">
+                                  <option value="average">Promedio</option>
+                                  <option value="mayor">Mayor</option>
+                                  <option value="last">Último</option>
+                              </select>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="measurement" class="col-md-2 col-form-label">Ubicación</label>  
+                          <div class="col-md-10">
+                              <select class="form-control" id="locationEdit" name="location_id">
+                              </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                          <button type="submit" class="btn btn-primary" id="updateItem">Confirmar</button>
+                        </div>
+                    </form>
+        </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalDelete" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalDelete" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Eliminar articulo</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <p>Esta seguro de eliminar el articulo?</p>
+            </div>
+            <div class="modal-footer" id="footer-delete">
+                
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+@include('partials/footer')

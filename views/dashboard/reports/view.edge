@@ -1,0 +1,222 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+<div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 id="title"><i class="fa fa-info-circle"></i> Generar reportes <span id="name_partner"></span></h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item active"><a href="clients.html">Generar reportes</a></li>
+              </ol>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+  
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <!-- Default box -->
+              <div class="card">
+                    <div class="card-body" id="cardItems">
+                        <div class="row justify-content-center mt-2">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header text-center">
+                                        Compras y ventas consolidadas
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="col-md-12">
+                                            <div class="input-group mt-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="usdSpan">Fecha Inicial</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="initial_date_buy" aria-describedby="date">
+                                            </div>
+                                            <div class="input-group mt-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="usdSpan">Fecha Final</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="end_date_buy" aria-describedby="date">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-info btn-block mt-4" id="generate_report_buy">Generar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header text-center">
+                                        Caja
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="col-md-12">
+                                            <div class="input-group mt-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="usdSpan">Fecha Inicial</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="initial_date_till" aria-describedby="date">
+                                            </div>
+                                            <div class="input-group mt-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="usdSpan">Fecha Final</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="end_date_till" aria-describedby="date">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-info btn-block mt-4" id="generate_report_box">Generar</button>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header text-center">
+                                        Movimientos de inventarios
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="col-md-12">
+                                            <div class="input-group mt-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="usdSpan">Fecha Inicial</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="initial_date_consolidate" aria-describedby="date" name="date_init">
+                                            </div>
+                                            <div class="input-group mt-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="usdSpan">Fecha Final</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="end_date_consolidate" aria-describedby="date" name="date_end">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-info btn-block mt-4" id="generate_report_consolidate">Generar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-4">
+                                <div class="card">
+                                    <div class="card-header text-center">
+                                        Ganancias y Perdidas
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="col-md-12">
+                                            <div class="input-group mt-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="usdSpan">Fecha Inicial</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="initial_date_profit" aria-describedby="date" name="date_init">
+                                            </div>
+                                            <div class="input-group mt-3">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="usdSpan">Fecha Final</span>
+                                                </div>
+                                                <input type="date" class="form-control" id="end_date_profit" aria-describedby="date" name="date_end">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-info btn-block mt-4" id="generate_report_profit">Generar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-4">
+                              <div class="card">
+                                  <div class="card-header text-center">
+                                      Reporte de pagos
+                                  </div>
+                                  <div class="card-body">
+                                      <div class="col-md-12">
+                                          <div class="input-group mt-3">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text" id="usdSpan">Fecha Inicial</span>
+                                              </div>
+                                              <input type="date" class="form-control" id="initial_date_payments" aria-describedby="date">
+                                          </div>
+                                          <div class="input-group mt-3">
+                                              <div class="input-group-prepend">
+                                                <span class="input-group-text" id="usdSpan">Fecha Final</span>
+                                              </div>
+                                              <input type="date" class="form-control" id="end_date_payments" aria-describedby="date">
+                                          </div>
+                                      </div>
+                                      <button type="button" class="btn btn-info btn-block mt-4" id="generate_report_payments">Generar</button>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+      </section>
+      <script>
+          $('#generate_report_buy').click(()=>{
+            const link = document.createElement("a");
+            link.target = "_blank";
+
+            // Construct the URI
+            link.href = `/dashboard/reports/buys_sales/${$('#initial_date_buy').val()}/${$('#end_date_buy').val()}`;
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup the DOM
+            document.body.removeChild(link);
+            delete link;
+          })
+
+          $('#generate_report_consolidate').click(()=>{
+            const link = document.createElement("a");
+            link.target = "_blank";
+
+            // Construct the URI
+            link.href = `/dashboard/reports/movements_consolidate/${$('#initial_date_consolidate').val()}/${$('#end_date_consolidate').val()}`;
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup the DOM
+            document.body.removeChild(link);
+            delete link;
+          })
+
+          $('#generate_report_profit').click(()=>{
+            const link = document.createElement("a");
+            link.target = "_blank";
+
+            // Construct the URI
+            link.href = `/dashboard/reports/profit_and_loss/${$('#initial_date_profit').val()}/${$('#end_date_profit').val()}`;
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup the DOM
+            document.body.removeChild(link);
+            delete link;
+          })
+
+          $('#generate_report_payments').click(()=>{
+            
+            const link = document.createElement("a");
+            link.target = "_blank";
+
+            // Construct the URI
+            link.href = `/dashboard/reports/payments_report/${$('#initial_date_payments').val()}/${$('#end_date_payments').val()}`;
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup the DOM
+            document.body.removeChild(link);
+            delete link;
+          })
+      </script>
+@include('partials/footer')

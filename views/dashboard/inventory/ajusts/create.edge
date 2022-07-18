@@ -1,0 +1,156 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 id="title"><i class="fa fa-book"></i> Realizar ajuste de inventario</h1>
+              </div>
+            </div>
+          </div><!-- /.container-fluid -->
+        </section>
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <!-- Default box -->
+                    <div class="row justify-content-center">
+                      <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header text-center">
+                              <div class="row justify-content-center">
+                                <div class="col-auto mr-auto my-auto">
+                                  Ajustar 
+                                </div>
+                                <div class="col-auto ml-auto">
+                                  <button type="button" class="btn btn-sm btn-info" id="select_item_modal_button">Añadir producto <i class="fas fa-plus-circle mr-auto"></i></button>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="card-body table-in card-body-table">
+                                <table class="table">
+                                  <thead class="thead-dark">
+                                    <tr>
+                                    <th class="text-center" style="width: 50px"><i class="fas fa-trash-alt mr-auto"></i></th>
+                                    <th>Ref.</th>
+                                    <th>Nombre</th>
+                                    <th>Categoria</th>
+                                    <th>Unidad</th>
+                                    <th>Marca</th>
+                                    <th>Costo $</th>
+                                    <th>Cantidad</th>
+                                    <th style="width: 200px;">Ajuste en inventario</th>
+                                    </tr>
+                                    <tbody id="tableItems">
+              
+                                    </tbody>
+                                </thead>
+                                </table>
+                            </div>
+                        </div>
+                      </div> 
+                      <div class="col-md-4">
+                        <div class="card">
+                          <div class="card-header">
+                            Observaciones
+                          </div>
+                          <div class="card-body">
+                            <textarea rows="5" class="form-control" type="text" id="comment" value=""></textarea>
+                            <button type="button" class="btn btn-info mt-3 btn-block" id="save">AJUSTAR INVENTARIO</button>
+                          </div>
+                        </div>
+                      </div>
+              </div>
+                <!-- /.card -->
+              </div>
+            </div>
+        </section>
+        <!-- /.content -->
+      </div>
+      
+      <div class="modal fade" id="select_item_modal" tabindex="-1" aria-labelledby="addProductRegistre" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Añadir producto</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="card">
+                <div id="messageTableProducts">
+                </div>
+                <div class="card-body card-body-table">
+                  <div class="row justify-content-end">
+                    <div class="col-md-8">
+                      <form id="formFindPartner">
+                          <div class="input-group input-group-dropdown mb-3">
+                              <div class="input-group-btn">
+                                  <select class="form-control" name="find_by" id="find_by_products" required>
+                                    <option value="name" selected>Nombre</option>
+                                    <option value="brand_id">Marca</option>
+                                    <option value="category_id">Categoria</option>
+                                    <option value="location">Ubicacion</option>
+                                    <option value="id">ID</option>
+                                  </select>
+                              </div>
+                              <div class="input-group-btn">
+                                  <select class="form-control" name="order_by" id="order_by_products" required>
+                                          <option value="asc" selected>Ascendiente</option>
+                                          <option value="desc">Descendente</option>
+                                  </select>
+                              </div>
+                              <input type="text" class="form-control" placeholder="Escriba un termino..." name="query" id="query_products" required>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                  <table class="table" id="tableItemsAdd">
+                    <thead class="thead-dark">
+                      <tr>
+                          <th scope="col">Ref.</th>
+                          <th scope="col">Nombre</th>
+                          <th scope="col">Categoria</th>
+                          <th scope="col">Marca</th>
+                      </tr>
+                  </thead>
+                  <tbody id="items_select_table">
+                  </tbody>
+                  </table>
+                  <div class="row justify-content-center">
+                    <div class="col-md-1 text-right">
+                      <button class="btn btn-sm btn-outline-info" id="previousPaginationItems"><i class="fas fa-angle-double-left"></i></button>
+                    </div>
+                    <div class="col-md-1 text-center mt-1">
+                      <span id="currentPageItems"></span> / <span id="lastPageItems"></span>
+                    </div>
+                    <div class="col-md-1" class="text-left">
+                      <button class="btn-sm btn btn-outline-info"  id="nextPaginationItems"><i class="fas fa-angle-double-right"></i></button>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              </div>
+            <div class="modal-footer">
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/new_ajust.js"></script>
+@include('partials/footer')

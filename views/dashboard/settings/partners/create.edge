@@ -1,0 +1,147 @@
+@include('partials/header')
+<div class="wrapper">
+    @include('partials/loader')
+    <!-- Navbar -->
+    
+    @include('partials/menu')
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    @include('partials/sidebar')
+    <div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<section class="content-header">
+			<div class="container-fluid">
+			  <div class="row mb-2">
+				<div class="col-sm-6">
+				  <h1 id="title"><i class="fa fa-user-plus"></i> Nuevo Registro</h1>
+				</div>
+			  </div>
+			</div><!-- /.container-fluid -->
+		  </section>
+	  
+		  <!-- Main content -->
+		  <section class="content">
+			<div class="container-fluid">
+			  <div class="row">
+				<div class="col-3 mb-3">
+				  <a  href="/dashboard/partners/?type_partner=clients" class="btn btn-info">Listado de registros</a>
+				</div>
+				<div class="col-12">
+				  <!-- Default box -->
+				  <div class="card card-info card-outline card-outline-tabs">
+					<div class="card-header p-0 border-bottom-0">
+					  <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+						<li class="nav-item">
+						  <a class="nav-link active" id="custom-tabs-four-home-tab" data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home" aria-selected="true">Información</a>
+						</li>
+					  </ul>
+					</div>
+					<div class="card-body">
+						@if(flashMessages.get('message'))
+                              <div class="col-lg-12">
+                                  <div class="alert alert-{{flashMessages.get('type')}}">
+                                      <strong>{{flashMessages.get('message')}}</strong>
+                                  </div>
+                              </div>
+                          @endif
+					  <div class="tab-content" id="custom-tabs-four-tabContent">
+						<div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
+						  	<form action="/dashboard/partners/create" method="post">
+								<div class="form-group clearfix">
+									<div class="icheck-primary d-inline">
+									  <input type="radio" id="natural_person" name="type_company" value="natural_person" checked required>
+									  <label for="natural_person">
+										Persona Natural
+									  </label>
+									</div>
+									<div class="icheck-primary d-inline">
+									  <input type="radio" id="company" name="type_company" value="company" required>
+									  <label for="company">
+										Compañia
+									  </label>
+									</div>
+								  </div>
+								  <div id="type_register_name">
+									<label for="name">Nombre y Apellido</label>
+									<div class="form-group form-inline">
+									  <input type="text" class="form-control col-6" id="name" placeholder="Carlos" name='name' required value="{{flashMessages.get('data.name', '')}}">
+									  <input type="text" class="form-control col-6" id="lastname" placeholder="Pérez" name='lastname' required value="{{flashMessages.get('data.lastname', '')}}">
+									</div>
+								  </div>
+								  <hr>
+								  <div class="row">
+									  <div class="col-6">
+										  <h4 class="text-center">Información de contacto</h4>
+										  <hr>
+										  <div class="form-group">
+											  <label>Número de contacto</label>
+							
+											  <div class="input-group">
+												<div class="input-group-prepend">
+												  <span class="input-group-text"><i class="fas fa-phone"></i></span>
+												</div>
+												<input id="phone" type="text" class="form-control" data-inputmask='"mask": "(999) 999-9999"' data-mask name="phone" value="{{flashMessages.get('data.phone', '')}}" required>
+											  </div>
+											  <!-- /.input group -->
+										  </div>
+										  <div class="form-group">
+											  <label for="dni">Documento de identidad</label><br>
+											  <div class="input-group mb-3">
+												  <div class="input-group-prepend">
+													  <select id="type_fiscal_id" name="type_fiscal_id" class="custom-select" required>
+														  <option>V</option>
+														  <option>E</option>
+														  <option>J</option>
+														  <option>G</option>
+													  </select>
+												  </div>
+												  <!-- /btn-group -->
+												  <input id="dni" type="text" class="form-control" name="fiscal_id" required value="{{flashMessages.get('data.fiscal_id', '')}}">
+											  </div>
+										  </div>
+										  <div class="form-group">
+											  <label>Dirección de habitación</label>
+											  <textarea id="address" class="form-control" rows="3" placeholder="Dirección..." name="address" required>{{flashMessages.get('data.address', '')}}</textarea>
+										  </div>
+									  </div>
+									  <div class="col-6">
+										  <h4 class="text-center">Tipo de registro</h4>
+										  <hr>
+										  <div class="form-group">
+											<div class="form-check">
+											  <input class="form-check-input" type="checkbox" value="true" name="client" id="client">
+											  <label class="form-check-label">Cliente</label>
+											</div>
+											<div class="form-check">
+											  <input class="form-check-input" type="checkbox" value="true" name="provider" id="provider">
+											  <label class="form-check-label">Proveedor</label>
+											</div>
+										  </div>
+										  <hr>
+										  <div class="form-group">
+											<div class="form-check">
+											  <input class="form-check-input" type="checkbox" value="true" name="special_contributor" id="special_contributor">
+											  <label class="form-check-label" for="special_contributor">Contribuyente Especial</label>
+											</div>
+										  </div>
+				  
+									  </div>
+									  <div class="col-md-12">
+										  <button type="submit" class="btn btn-sm btn-success btn-block" id="save_register"> <i class="fas fa-save"></i> Guardar Cambios</button>
+									  </div>
+								  </div>
+								</div>
+							</form>
+					  </div>
+					<!-- /.card-body -->
+				  </div>
+				  <!-- /.card -->
+				</div>
+		  </section>
+		<!-- /.content -->
+	  </div>
+	</div>
+</div>
+
+@include('partials/footer')
